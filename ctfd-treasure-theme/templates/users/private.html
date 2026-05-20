@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="tm-hero profile-hero-v17 profile-hero-v18 profile-hero-v19">
+  <div class="tm-eyebrow">🧭 Captain Profile</div>
+  <h1 class="tm-title profile-generic-title-v18">Captain Dashboard</h1>
+</section>
+
+<section class="profile-shell profile-shell-v17">
+  {% include "components/errors.html" %}
+
+  <div class="profile-card-v17 profile-card-v19">
+    <div class="profile-banner-v17 profile-banner-v19"></div>
+    <div class="profile-main-v17 profile-main-v19">
+      <div class="profile-avatar-v17 profile-avatar-v19">☠️</div>
+      <div class="profile-identity-v17 profile-identity-v19">
+        <span>Captain Identity</span>
+        <h2>{{ user.name }}</h2>
+        <div class="profile-tags-v17">
+          {% if user.team_id %}<a href="{{ url_for('teams.private') }}">⛵ {{ user.team.name }}</a>{% endif %}
+          {% if user.affiliation %}<b>🏴 {{ user.affiliation }}</b>{% endif %}
+          {% if user.country %}<b>🌍 {{ user.country }}</b>{% endif %}
+          {% for field in user.fields %}<b>{{ field.name }}: {{ field.value }}</b>{% endfor %}
+        </div>
+      </div>
+      <div class="profile-actions-v17">
+        {% if user.website %}<a href="{{ user.website }}" target="_blank" rel="noopener" class="btn btn-ghost">🌐 Website</a>{% endif %}
+        <a href="{{ url_for('views.settings') }}" class="btn btn-treasure">Edit Profile</a>
+      </div>
+    </div>
+
+    <div class="profile-stats-v17 profile-stats-v19">
+      <div><strong>{% if account.place %}#{{ account.place }}{% else %}-{% endif %}</strong><span>Rank</span></div>
+      <div><strong>{{ account.score or 0 }}</strong><span>Points</span></div>
+      <div><strong>{{ user.solves | length }}</strong><span>Solves</span></div>
+      <div><strong>{{ user.awards | length }}</strong><span>Awards</span></div>
+    </div>
+  </div>
+
+  <div class="profile-data-v17" hidden>
+    {% for solve in user.solves %}
+      <span class="js-profile-solve-v17"
+            data-name="{{ solve.challenge.name }}"
+            data-category="{{ solve.challenge.category or 'Uncategorized' }}"
+            data-type="{{ solve.challenge.type or 'standard' }}"
+            data-value="{{ solve.challenge.value or 0 }}"
+            data-date="{{ solve.date | isoformat }}"></span>
+    {% endfor %}
+  </div>
+
+  <div class="profile-grid-v17">
+    <div class="profile-panel-v17 profile-panel-v19">
+      <div class="profile-panel-head-v17"><h3>🧩 Solve Type</h3><span>Keys</span></div>
+      <div class="profile-metric-list-v17" id="solve-type-panel-v17"></div>
+    </div>
+    <div class="profile-panel-v17 profile-panel-v19">
+      <div class="profile-panel-head-v17"><h3>🏝️ Categories</h3><span>Islands</span></div>
+      <div class="profile-metric-list-v17" id="category-panel-v17"></div>
+    </div>
+    <div class="profile-panel-v17 profile-panel-v19 profile-panel-wide-v17">
+      <div class="profile-panel-head-v17"><h3>📈 Score Route</h3><span>Journey</span></div>
+      <div class="score-route-v17" id="score-route-panel-v17"></div>
+    </div>
+  </div>
+
+  {% if user.awards %}
+    <div class="profile-panel-v17 profile-panel-v19 mt-4">
+      <div class="profile-panel-head-v17"><h3>🏅 Awards</h3><span>{{ user.awards | length }} collected</span></div>
+      <div class="award-grid-v17">
+        {% for award in user.awards %}
+          <div class="award-card-v17">
+            <i class="award-icon award-{{ award.icon }}"></i>
+            <b>{{ award.name }}</b>
+            <span>{{ award.description or award.category or "Treasure award" }}</span>
+            <strong>{{ award.value }}</strong>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="profile-panel-v17 profile-panel-v19 mt-4">
+    <div class="profile-panel-head-v17"><h3>✅ Solves</h3><span>{{ user.solves | length }} treasure claimed</span></div>
+    {% if user.solves %}
+      <div class="solve-list-v17">
+        {% for solve in user.solves %}
+          <a class="solve-card-v17" href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+            <span class="solve-icon-v17">💎</span>
+            <div>
+              <b>{{ solve.challenge.name }}</b>
+              <small>{{ solve.challenge.category }} · {{ solve.challenge.value }} pts</small>
+            </div>
+            <time data-time="{{ solve.date | isoformat }}"></time>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-profile-v17">
+        <h3>Belum ada solve.</h3>
+        <p>Mulai buka Treasure Map dan klaim flag pertama kamu.</p>
+        <a class="btn btn-treasure" href="{{ url_for('challenges.listing') }}">Open Treasure Map</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  function ready(fn){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn):fn();}
+  function countBy(items, key){
+    return items.reduce(function(acc,item){var k=item[key]||'Unknown'; acc[k]=(acc[k]||0)+1; return acc;},{});
+  }
+  function renderMetrics(el, counts, total){
+    if(!el) return;
+    var entries=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];});
+    if(!entries.length){el.innerHTML='<div class="profile-empty-mini-v17">Belum ada data solve.</div>'; return;}
+    el.innerHTML=entries.map(function(name){
+      var count=counts[name]; var pct=total?Math.round((count/total)*100):0;
+      return '<div class="profile-metric-v17"><div><b>'+escapeHtml(name)+'</b><span>'+count+' solve</span></div><em>'+pct+'%</em><i style="--w:'+pct+'%"></i></div>';
+    }).join('');
+  }
+  function renderRoute(el, items){
+    if(!el) return;
+    if(!items.length){el.innerHTML='<div class="profile-empty-mini-v17">Belum ada perjalanan score.</div>'; return;}
+    var sum=0;
+    el.innerHTML=items.map(function(item,idx){
+      sum += Number(item.value||0);
+      return '<div class="route-step-v17"><span>'+(idx+1)+'</span><div><b>'+escapeHtml(item.name)+'</b><small>'+escapeHtml(item.category)+' · '+Number(item.value||0)+' pts</small></div><strong>'+sum+' pts</strong></div>';
+    }).join('');
+  }
+  function escapeHtml(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  ready(function(){
+    var items=[].slice.call(document.querySelectorAll('.js-profile-solve-v17')).map(function(n){return {
+      name:n.dataset.name, category:n.dataset.category, type:n.dataset.type, value:Number(n.dataset.value||0), date:n.dataset.date
+    };}).sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+    renderMetrics(document.getElementById('solve-type-panel-v17'), countBy(items,'type'), items.length);
+    renderMetrics(document.getElementById('category-panel-v17'), countBy(items,'category'), items.length);
+    renderRoute(document.getElementById('score-route-panel-v17'), items);
+  });
+})();
+</script>
+{% endblock %}
+

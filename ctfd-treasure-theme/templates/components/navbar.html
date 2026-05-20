@@ -1,0 +1,36 @@
+<nav class="tm-nav" aria-label="Main navigation">
+  <div class="tm-nav-inner">
+    <a class="tm-brand" href="{{ url_for('views.static_html', route='/') }}">
+      <span class="tm-brand-coin">☠️</span>
+      <span class="tm-brand-text">
+        <strong>{{ Configs.ctf_name }}</strong>
+        <small>Treasure Hunt</small>
+      </span>
+    </a>
+
+    <button class="tm-nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+
+    <div class="tm-nav-links">
+      {% if authed() %}
+        <a href="{{ url_for('users.listing') }}">👥 Crews</a>
+        <a href="{{ url_for('scoreboard.listing') }}">🏆 Ledger</a>
+        <a href="{{ url_for('challenges.listing') }}">🗺️ Treasure Map</a>
+        <a href="{{ url_for('views.notifications') }}">🔔 Signals</a>
+        <a href="{{ url_for('users.private') }}">🧭 Profile</a>
+        {% if is_admin() %}
+          <a class="tm-admin-link" href="{{ url_for('admin.view') }}">🛠️ Admin</a>
+          <a class="tm-admin-link" href="{{ url_for('views.settings') }}">⚙️ Settings</a>
+        {% endif %}
+        <a class="tm-logout-link" href="{{ url_for('auth.logout') }}">🚪 Logout</a>
+      {% else %}
+        <a href="{{ url_for('users.listing') }}">👥 Crews</a>
+        <a href="{{ url_for('scoreboard.listing') }}">🏆 Ledger</a>
+        <a href="{{ url_for('challenges.listing') }}">🗺️ Treasure Map</a>
+        <a href="{{ url_for('auth.login') }}">🔐 Login</a>
+        {% if registration_visible() %}
+          <a class="tm-admin-link" href="{{ url_for('auth.register') }}">📝 Register</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-shell auth-shell-v16 register-page-v16">
+  <div class="auth-card auth-card-v16">
+    <div class="auth-grid-v16 auth-grid-register-v16">
+      <aside class="auth-art-v16 register-art-v16">
+        <div class="auth-coin-v16">🏴‍☠️</div>
+        <h2>Join The Crew</h2>
+        <p>Buat akun baru, masuk ke kapal, lalu mulai klaim treasure dari setiap island.</p>
+        <div class="auth-checklist-v16">
+          <span>✅ Username kapten</span>
+          <span>✅ Email aktif</span>
+          <span>✅ Passphrase aman</span>
+        </div>
+      </aside>
+
+      <div class="auth-form-v16">
+        <div class="tm-eyebrow">📝 New Captain</div>
+        <h1>Register</h1>
+        <p>Daftarkan kapten baru untuk memulai perburuan flag.</p>
+        {% include "components/errors.html" %}
+        {% with form = Forms.auth.RegistrationForm() %}
+        {% from "core/macros/forms.html" import render_extra_fields %}
+        <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="tm-form-v16">
+          <label class="tm-field-v16">
+            <span>User Name</span>
+            <div class="tm-input-icon-v16">
+              <b>@</b>
+              {{ form.name(class="form-control", value=name, placeholder="Captain username") }}
+            </div>
+          </label>
+
+          <label class="tm-field-v16">
+            <span>Email</span>
+            <div class="tm-input-icon-v16 no-prepend-v16">
+              {{ form.email(class="form-control", value=email, placeholder="captain@example.com") }}
+            </div>
+          </label>
+
+          <label class="tm-field-v16">
+            <span>Password</span>
+            <div class="tm-input-icon-v16">
+              <b>#</b>
+              {{ form.password(class="form-control", value=password, placeholder="Create passphrase") }}
+            </div>
+          </label>
+
+          <div class="extra-fields-v16">{{ render_extra_fields(form.extra) }}</div>
+          {{ form.nonce() }}
+          {{ form.submit(class="btn btn-treasure btn-lg btn-block auth-submit-v16", value="Join The Hunt") }}
+        </form>
+        {% endwith %}
+        {% if Configs.tos_or_privacy %}
+          <p class="auth-terms-v16">By registering, you agree to the <a href="{{ Configs.privacy_link }}" rel="noopener" target="_blank">privacy policy</a> and <a href="{{ Configs.tos_link }}" rel="noopener" target="_blank">terms of service</a>.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

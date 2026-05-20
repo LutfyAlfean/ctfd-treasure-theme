@@ -1,0 +1,2098 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style id="harbas-google-map-treasure-v14">
+  body.tm-body .tm-main {
+    padding-bottom: 0 !important;
+  }
+
+  body.tm-body .gps-treasure-page {
+    width: min(1500px, calc(100% - 28px));
+    margin: 0 auto;
+    padding: clamp(20px, 3vw, 34px) 0 44px;
+  }
+
+  body.tm-body .gps-hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 22px;
+    align-items: end;
+    margin-bottom: 18px;
+  }
+
+  body.tm-body .gps-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    width: fit-content;
+    padding: 10px 18px;
+    border-radius: 999px;
+    color: #241103;
+    background: linear-gradient(135deg, #fff4c8, #ffc64d);
+    border: 1px solid rgba(92, 54, 17, .22);
+    box-shadow: 0 14px 28px rgba(0,0,0,.18);
+    font-weight: 1000;
+    letter-spacing: .25px;
+  }
+
+  body.tm-body .gps-title {
+    margin: 16px 0 8px;
+    color: #fff2bf;
+    font-size: clamp(2.5rem, 6vw, 5.4rem);
+    line-height: .95;
+    font-weight: 1000;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 5px 0 #4a2608, 0 22px 42px rgba(0,0,0,.36);
+  }
+
+  body.tm-body .gps-subtitle {
+    max-width: 780px;
+    margin: 0;
+    color: rgba(255, 245, 205, .92);
+    font-size: clamp(1rem, 1.7vw, 1.24rem);
+    font-weight: 750;
+    line-height: 1.65;
+  }
+
+  body.tm-body .gps-live-card {
+    min-width: 240px;
+    padding: 16px 18px;
+    border-radius: 24px;
+    color: #241103;
+    background: linear-gradient(135deg, rgba(255,246,215,.96), rgba(231,181,85,.94));
+    border: 1px solid rgba(92,54,17,.18);
+    box-shadow: 0 18px 40px rgba(0,0,0,.22);
+  }
+
+  body.tm-body .gps-live-card b {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 1.65rem;
+    line-height: 1;
+  }
+
+  body.tm-body .gps-live-card span {
+    color: #58320e;
+    font-weight: 950;
+  }
+
+  body.tm-body .gps-map-shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    min-height: min(760px, calc(100vh - 180px));
+    overflow: hidden;
+    border-radius: 34px;
+    background: #0d2e34;
+    border: 1px solid rgba(255, 231, 155, .28);
+    box-shadow: 0 34px 90px rgba(0,0,0,.42);
+  }
+
+  body.tm-body .gps-map-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 22% 20%, rgba(255,242,191,.16), transparent 24rem),
+      radial-gradient(circle at 72% 78%, rgba(20,115,120,.28), transparent 28rem),
+      linear-gradient(135deg, rgba(4,19,23,.20), rgba(0,0,0,.26));
+  }
+
+  body.tm-body .gps-sidebar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    color: #241103;
+    background:
+      radial-gradient(circle at 14% 12%, rgba(255,255,255,.32), transparent 10rem),
+      linear-gradient(165deg, #fff0bf 0%, #e1b45e 100%);
+    border-right: 1px solid rgba(92,54,17,.22);
+  }
+
+  body.tm-body .gps-sidebar-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  body.tm-body .gps-compass-logo {
+    width: 50px;
+    height: 50px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    color: #fff2bf;
+    font-size: 1.65rem;
+    background: linear-gradient(135deg, #2f1706, #6f3b0d);
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,.10), 0 12px 22px rgba(92,54,17,.22);
+  }
+
+  body.tm-body .gps-sidebar h2 {
+    margin: 0;
+    color: #241103;
+    font-size: 1.26rem;
+    font-weight: 1000;
+    line-height: 1.1;
+  }
+
+  body.tm-body .gps-sidebar p {
+    margin: 5px 0 0;
+    color: #6b421a;
+    font-size: .9rem;
+    font-weight: 850;
+  }
+
+  body.tm-body .gps-search-wrap {
+    position: relative;
+  }
+
+  body.tm-body .gps-search-wrap span {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #7a4b18;
+    font-weight: 1000;
+  }
+
+  body.tm-body .gps-search {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px 0 43px;
+    border-radius: 18px;
+    color: #241103;
+    background: rgba(255,255,255,.62);
+    border: 1px solid rgba(92,54,17,.18);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.34);
+    font-weight: 900;
+    outline: none;
+  }
+
+  body.tm-body .gps-search:focus {
+    border-color: rgba(248,187,62,.85);
+    box-shadow: 0 0 0 4px rgba(248,187,62,.22), inset 0 2px 0 rgba(255,255,255,.42);
+  }
+
+  body.tm-body .gps-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  body.tm-body .gps-filter-btn,
+  body.tm-body .gps-route-btn,
+  body.tm-body .gps-popup button,
+  body.tm-body .gps-map-control {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    font-weight: 1000;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, filter .18s ease;
+  }
+
+  body.tm-body .gps-filter-btn {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 17px;
+    color: #4b2a0d;
+    background: rgba(255,255,255,.44);
+    border: 1px solid rgba(92,54,17,.12);
+    box-shadow: 0 8px 16px rgba(92,54,17,.08);
+  }
+
+  body.tm-body .gps-filter-btn:hover,
+  body.tm-body .gps-filter-btn.active {
+    color: #241103;
+    background: linear-gradient(135deg, #fff6cc, #f8bb3e);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 26px rgba(92,54,17,.18);
+  }
+
+  body.tm-body .gps-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+  }
+
+  body.tm-body .gps-stat {
+    padding: 12px 10px;
+    border-radius: 16px;
+    text-align: center;
+    background: rgba(255,255,255,.38);
+    border: 1px solid rgba(92,54,17,.12);
+  }
+
+  body.tm-body .gps-stat b {
+    display: block;
+    color: #241103;
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+
+  body.tm-body .gps-stat small {
+    color: #6b421a;
+    font-weight: 1000;
+    font-size: .74rem;
+    text-transform: uppercase;
+    letter-spacing: .35px;
+  }
+
+  body.tm-body .gps-category-panel {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  body.tm-body .gps-category-panel h3 {
+    margin: 0;
+    color: #241103;
+    font-size: .95rem;
+    font-weight: 1000;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  body.tm-body .gps-category-list {
+    min-height: 90px;
+    max-height: 260px;
+    overflow: auto;
+    padding-right: 4px;
+    display: grid;
+    gap: 9px;
+  }
+
+  body.tm-body .gps-route-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 16px;
+    color: #241103;
+    text-align: left;
+    background: rgba(255,255,255,.36);
+    border: 1px solid rgba(92,54,17,.10);
+  }
+
+  body.tm-body .gps-route-btn:hover,
+  body.tm-body .gps-route-btn.active {
+    background: linear-gradient(135deg, rgba(255,248,215,.92), rgba(248,187,62,.70));
+    transform: translateX(3px);
+  }
+
+  body.tm-body .gps-route-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    color: #fff2bf;
+    background: linear-gradient(135deg, #174737, #2f8261);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+  }
+
+  body.tm-body .gps-route-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  body.tm-body .gps-route-info b {
+    display: block;
+    overflow: hidden;
+    color: #241103;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: .95rem;
+  }
+
+  body.tm-body .gps-route-info small {
+    display: block;
+    color: #744719;
+    font-weight: 900;
+    font-size: .78rem;
+  }
+
+  body.tm-body .gps-status {
+    margin-top: auto;
+    padding: 13px 14px;
+    border-radius: 16px;
+    color: #241103;
+    background: rgba(255,255,255,.42);
+    border: 1px dashed rgba(92,54,17,.24);
+    font-weight: 900;
+    line-height: 1.45;
+  }
+
+  body.tm-body .gps-map-stage {
+    position: relative;
+    min-width: 0;
+    min-height: 670px;
+    overflow: hidden;
+    isolation: isolate;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    background:
+      radial-gradient(circle at 18% 16%, rgba(106,205,151,.36) 0 4.2rem, transparent 4.35rem),
+      radial-gradient(circle at 72% 72%, rgba(100,179,130,.28) 0 5.1rem, transparent 5.25rem),
+      radial-gradient(circle at 90% 24%, rgba(80,157,129,.20) 0 3.1rem, transparent 3.3rem),
+      linear-gradient(135deg, #10414c 0%, #0a2b35 56%, #06151b 100%);
+  }
+
+  body.tm-body .gps-map-stage.is-dragging {
+    cursor: grabbing;
+  }
+
+  body.tm-body .gps-map-stage button,
+  body.tm-body .gps-map-stage input,
+  body.tm-body .gps-map-stage a,
+  body.tm-body .gps-map-stage .gps-popup {
+    user-select: auto;
+  }
+
+  body.tm-body .gps-map-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: .36;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 54px 54px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body.tm-body .gps-map-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background:
+      radial-gradient(circle at 16% 80%, rgba(255,240,191,.12), transparent 13rem),
+      radial-gradient(circle at 82% 12%, rgba(255,240,191,.10), transparent 12rem),
+      linear-gradient(180deg, transparent, rgba(0,0,0,.20));
+  }
+
+  body.tm-body .gps-map-canvas {
+    --zoom: 1;
+    --pan-x: 0px;
+    --pan-y: 0px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    width: 1600px;
+    height: 1000px;
+    transform: translate3d(var(--pan-x), var(--pan-y), 0) scale(var(--zoom));
+    transform-origin: 0 0;
+    transition: transform .22s cubic-bezier(.2,.8,.2,1);
+    will-change: transform;
+  }
+
+  body.tm-body .gps-map-stage.is-dragging .gps-map-canvas {
+    transition: none;
+  }
+
+  body.tm-body .gps-map-canvas::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: .34;
+    background:
+      radial-gradient(circle at 10% 13%, rgba(120, 223, 159, .35) 0 72px, transparent 76px),
+      radial-gradient(circle at 88% 22%, rgba(120, 223, 159, .24) 0 82px, transparent 86px),
+      radial-gradient(circle at 72% 86%, rgba(120, 223, 159, .28) 0 92px, transparent 96px),
+      radial-gradient(circle at 30% 68%, rgba(255, 232, 150, .11) 0 95px, transparent 100px);
+  }
+
+  body.tm-body .gps-route-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  body.tm-body .gps-route-svg path {
+    fill: none;
+    stroke: rgba(255, 224, 126, .78);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 12 14;
+    filter: drop-shadow(0 3px 2px rgba(0,0,0,.32));
+    animation: gpsDash 15s linear infinite;
+  }
+
+  @keyframes gpsDash { to { stroke-dashoffset: -260; } }
+
+  body.tm-body .gps-map-label {
+    position: absolute;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    color: #241103;
+    background: rgba(255,244,198,.82);
+    border: 1px solid rgba(92,54,17,.18);
+    box-shadow: 0 12px 24px rgba(0,0,0,.18);
+    font-size: .78rem;
+    font-weight: 1000;
+    backdrop-filter: blur(8px);
+  }
+
+  body.tm-body .label-1 { top: 16%; left: 14%; }
+  body.tm-body .label-2 { top: 66%; left: 52%; }
+  body.tm-body .label-3 { top: 30%; right: 11%; }
+
+  body.tm-body .gps-pin {
+    --x: 50;
+    --y: 50;
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    z-index: 4;
+    width: 74px;
+    min-height: 86px;
+    transform: translate(-50%, -100%);
+    display: grid;
+    justify-items: center;
+    gap: 5px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #fff2bf;
+    cursor: pointer;
+    filter: drop-shadow(0 12px 14px rgba(0,0,0,.36));
+    animation: gpsPinIn .35s ease both;
+  }
+
+  @keyframes gpsPinIn {
+    from { opacity: 0; transform: translate(-50%, -90%) scale(.72); }
+    to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+  }
+
+  body.tm-body .gps-pin-marker {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px 18px 18px 6px;
+    transform: rotate(-45deg);
+    background: linear-gradient(135deg, #2f8261, #164333);
+    border: 3px solid #fff2bf;
+    box-shadow: inset 0 -8px 0 rgba(0,0,0,.12), 0 0 0 6px rgba(255,240,191,.10);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+
+  body.tm-body .gps-pin-marker span {
+    transform: rotate(45deg);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  body.tm-body .gps-pin::after {
+    content: "";
+    width: 28px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.25);
+    filter: blur(2px);
+  }
+
+  body.tm-body .gps-pin:hover .gps-pin-marker,
+  body.tm-body .gps-pin.active .gps-pin-marker,
+  body.tm-body .gps-pin.is-picked .gps-pin-marker {
+    transform: rotate(-45deg) translateY(-7px) scale(1.08);
+    box-shadow: inset 0 -8px 0 rgba(0,0,0,.12), 0 0 0 8px rgba(248,187,62,.22), 0 18px 34px rgba(0,0,0,.32);
+  }
+
+  body.tm-body .gps-pin.is-solved .gps-pin-marker {
+    background: linear-gradient(135deg, #ffc64d, #9a650f);
+  }
+
+  body.tm-body .gps-pin .gps-pin-price {
+    max-width: 72px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    color: #241103;
+    background: rgba(255,244,198,.92);
+    border: 1px solid rgba(92,54,17,.15);
+    font-size: .73rem;
+    font-weight: 1000;
+    white-space: nowrap;
+  }
+
+  body.tm-body .gps-popup {
+    position: absolute;
+    z-index: 8;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    width: min(330px, calc(100% - 42px));
+    transform: translate(-50%, calc(-100% - 88px));
+    padding: 16px;
+    border-radius: 24px;
+    color: #241103;
+    background: linear-gradient(145deg, rgba(255,247,215,.98), rgba(231,181,85,.97));
+    border: 1px solid rgba(92,54,17,.20);
+    box-shadow: 0 26px 60px rgba(0,0,0,.34);
+    animation: gpsPopup .2s ease both;
+  }
+
+  @keyframes gpsPopup {
+    from { opacity: 0; transform: translate(-50%, calc(-100% - 62px)) scale(.94); }
+    to { opacity: 1; transform: translate(-50%, calc(-100% - 88px)) scale(1); }
+  }
+
+  body.tm-body .gps-popup::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    width: 22px;
+    height: 22px;
+    transform: translateX(-50%) rotate(45deg);
+    background: #eac075;
+    border-right: 1px solid rgba(92,54,17,.20);
+    border-bottom: 1px solid rgba(92,54,17,.20);
+  }
+
+  body.tm-body .gps-popup-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  body.tm-body .gps-popup-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    color: #fff2bf;
+    background: linear-gradient(135deg, #174737, #2f8261);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+    font-size: 1.35rem;
+  }
+
+  body.tm-body .gps-popup h3 {
+    margin: 0;
+    color: #241103;
+    font-size: 1.14rem;
+    font-weight: 1000;
+    line-height: 1.15;
+  }
+
+  body.tm-body .gps-popup-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  body.tm-body .gps-popup-meta span {
+    padding: 5px 9px;
+    border-radius: 999px;
+    color: #4e2c0d;
+    background: rgba(255,255,255,.44);
+    font-weight: 950;
+    font-size: .76rem;
+  }
+
+  body.tm-body .gps-popup-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  body.tm-body .gps-popup button {
+    flex: 1;
+    min-height: 42px;
+    border-radius: 14px;
+    color: #241103;
+    background: rgba(255,255,255,.48);
+  }
+
+  body.tm-body .gps-popup button.primary {
+    color: #fff2bf;
+    background: linear-gradient(135deg, #3d210a, #75410f);
+  }
+
+  body.tm-body .gps-popup button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+  }
+
+  body.tm-body .gps-map-controls {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    z-index: 9;
+    display: grid;
+    gap: 8px;
+  }
+
+  body.tm-body .gps-map-control {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    color: #241103;
+    background: rgba(255,244,198,.92);
+    border: 1px solid rgba(92,54,17,.18);
+    box-shadow: 0 10px 22px rgba(0,0,0,.22);
+    font-size: 1.15rem;
+  }
+
+  body.tm-body .gps-map-control:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #fff6cc, #f8bb3e);
+  }
+
+  body.tm-body .gps-bottom-bar {
+    position: absolute;
+    z-index: 9;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 20px;
+    color: #241103;
+    background: rgba(255,244,198,.92);
+    border: 1px solid rgba(92,54,17,.18);
+    box-shadow: 0 14px 28px rgba(0,0,0,.20);
+    backdrop-filter: blur(12px);
+  }
+
+  body.tm-body .gps-bottom-bar b {
+    color: #241103;
+    font-weight: 1000;
+  }
+
+  body.tm-body .gps-bottom-bar span {
+    color: #5e3712;
+    font-weight: 900;
+  }
+
+  body.tm-body .gps-empty {
+    position: absolute;
+    z-index: 7;
+    left: 50%;
+    top: 50%;
+    width: min(470px, calc(100% - 40px));
+    transform: translate(-50%, -50%);
+    padding: 26px;
+    text-align: center;
+    border-radius: 26px;
+    color: #241103;
+    background: rgba(255,244,198,.94);
+    border: 1px solid rgba(92,54,17,.18);
+    box-shadow: 0 22px 60px rgba(0,0,0,.28);
+  }
+
+  body.tm-body .gps-empty h3 {
+    color: #241103;
+    margin: 0 0 8px;
+    font-weight: 1000;
+  }
+
+  body.tm-body .treasure-clue-modal {
+    border-radius: 28px !important;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(255,255,255,.38), transparent 12rem),
+      linear-gradient(145deg, #fff0bf, #e7b754) !important;
+    border: 1px solid rgba(92,54,17,.20) !important;
+    box-shadow: 0 34px 90px rgba(0,0,0,.45) !important;
+  }
+
+  body.tm-body .treasure-clue-modal .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 22px 24px;
+    border-bottom: 1px dashed rgba(92,54,17,.22) !important;
+  }
+
+  body.tm-body .treasure-clue-modal .modal-title {
+    color: #241103 !important;
+    font-size: clamp(1.7rem, 4vw, 2.6rem) !important;
+    line-height: 1.06;
+    font-weight: 1000;
+    text-shadow: none !important;
+  }
+
+  body.tm-body .treasure-clue-modal .modal-body {
+    padding: 22px 24px;
+    color: #241103 !important;
+    max-height: min(68vh, 760px);
+    overflow: auto;
+  }
+
+  body.tm-body .clue-block {
+    border-radius: 20px !important;
+    background: rgba(255,255,255,.42) !important;
+    border: 1px solid rgba(92,54,17,.13) !important;
+  }
+
+  body.tm-body .flag-submit-group .form-control {
+    min-height: 52px;
+    border-radius: 16px 0 0 16px !important;
+    border-color: rgba(92,54,17,.20) !important;
+  }
+
+  body.tm-body .flag-submit-group .btn-treasure {
+    border-radius: 0 16px 16px 0 !important;
+  }
+
+
+
+  body.tm-body .gps-drag-chip {
+    position: absolute;
+    z-index: 10;
+    left: 18px;
+    top: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    color: #241103;
+    background: rgba(255,244,198,.92);
+    border: 1px solid rgba(92,54,17,.18);
+    box-shadow: 0 12px 24px rgba(0,0,0,.20);
+    font-size: .82rem;
+    font-weight: 1000;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+  }
+
+  body.tm-body .gps-map-stage.is-dragging .gps-drag-chip {
+    background: linear-gradient(135deg, #fff6cc, #f8bb3e);
+  }
+
+  body.tm-body .treasure-toast {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 3000;
+    width: min(390px, calc(100vw - 34px));
+    padding: 16px 18px;
+    border-radius: 22px;
+    color: #241103;
+    background: linear-gradient(135deg, #fff6cc, #f8bb3e);
+    border: 1px solid rgba(92,54,17,.22);
+    box-shadow: 0 24px 60px rgba(0,0,0,.34);
+    font-weight: 950;
+    animation: toastIn .25s ease both;
+  }
+
+  body.tm-body .treasure-toast.bad {
+    color: #fff5d6;
+    background: linear-gradient(135deg, #8c2f21, #d65a3d);
+  }
+
+  body.tm-body .treasure-toast b {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 1.05rem;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(18px) scale(.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  body.tm-body .treasure-confetti {
+    position: fixed;
+    left: var(--cx);
+    top: var(--cy);
+    z-index: 3100;
+    pointer-events: none;
+    font-size: 1.35rem;
+    animation: treasurePop 1.2s ease-out forwards;
+  }
+
+  @keyframes treasurePop {
+    0% { opacity: 0; transform: translate(0,0) scale(.4) rotate(0deg); }
+    12% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(360deg); }
+  }
+
+  body.tm-body .treasure-modal .modal-dialog.modal-xl {
+    width: min(1180px, calc(100% - 28px));
+    max-width: min(1180px, calc(100% - 28px));
+    margin: 22px auto;
+  }
+
+  body.tm-body .treasure-clue-modal {
+    overflow: hidden;
+    border-radius: 32px !important;
+  }
+
+  body.tm-body .treasure-clue-modal .modal-header {
+    min-height: 150px;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,.55), transparent 12rem),
+      linear-gradient(135deg, rgba(255,246,205,.96), rgba(245,190,72,.82));
+  }
+
+  body.tm-body .treasure-clue-modal .modal-title-wrap {
+    display: grid;
+    grid-template-columns: 58px 1fr;
+    gap: 14px;
+    align-items: center;
+  }
+
+  body.tm-body .treasure-clue-modal .modal-icon {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 20px;
+    color: #fff2bf;
+    background: linear-gradient(135deg, #174737, #2f8261);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.16), 0 14px 26px rgba(0,0,0,.18);
+    font-size: 1.7rem;
+  }
+
+  body.tm-body .treasure-clue-modal .modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  body.tm-body .treasure-clue-modal .modal-meta span,
+  body.tm-body .tag-list .badge {
+    padding: 7px 11px;
+    border-radius: 999px;
+    color: #4e2c0d;
+    background: rgba(255,255,255,.54);
+    border: 1px solid rgba(92,54,17,.12);
+    font-size: .82rem;
+    font-weight: 1000;
+  }
+
+  body.tm-body .treasure-clue-modal .close {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: #241103 !important;
+    background: rgba(255,255,255,.56) !important;
+    border: 1px solid rgba(92,54,17,.18) !important;
+    font-size: 1.45rem;
+    opacity: 1 !important;
+  }
+
+  body.tm-body .clue-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 18px;
+  }
+
+  body.tm-body .clue-card,
+  body.tm-body .clue-submit-card {
+    padding: 18px;
+    border-radius: 24px;
+    color: #241103;
+    background: rgba(255,255,255,.43);
+    border: 1px solid rgba(92,54,17,.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.40);
+  }
+
+  body.tm-body .clue-card h4,
+  body.tm-body .clue-submit-card h4 {
+    margin: 0 0 12px;
+    color: #241103;
+    font-size: 1rem;
+    font-weight: 1000;
+  }
+
+  body.tm-body .clue-description {
+    min-height: 190px;
+    padding: 20px;
+    border-radius: 22px;
+    color: #241103;
+    background: rgba(255,248,224,.72);
+    border: 1px dashed rgba(92,54,17,.22);
+    font-size: 1.02rem;
+    line-height: 1.72;
+  }
+
+  body.tm-body .clue-description p:last-child { margin-bottom: 0; }
+  body.tm-body .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+  body.tm-body .file-list { display: flex; flex-wrap: wrap; gap: 10px; }
+  body.tm-body .clue-block pre,
+  body.tm-body .clue-card pre {
+    margin: 10px 0 0;
+    white-space: pre-wrap;
+    color: #241103;
+    background: rgba(255,248,224,.78);
+    border-radius: 16px;
+    border: 1px solid rgba(92,54,17,.12);
+    padding: 14px;
+  }
+
+  body.tm-body .flag-label {
+    display: block;
+    margin: 0 0 10px;
+    color: #241103;
+    font-weight: 1000;
+  }
+
+  body.tm-body .flag-submit-group {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  body.tm-body .flag-submit-group .form-control,
+  body.tm-body .flag-submit-group .btn-treasure {
+    width: 100%;
+    border-radius: 17px !important;
+  }
+
+  body.tm-body .flag-submit-group .form-control {
+    min-height: 56px;
+    padding: 0 16px;
+    font-weight: 900;
+    color: #241103;
+    background: rgba(255,255,255,.75);
+  }
+
+  body.tm-body .btn-treasure {
+    min-height: 54px;
+    color: #fff2bf !important;
+    background: linear-gradient(135deg, #3d210a, #75410f) !important;
+    border: 0 !important;
+    font-weight: 1000;
+    box-shadow: 0 16px 28px rgba(92,54,17,.25);
+  }
+
+  body.tm-body .btn-treasure:hover { filter: brightness(1.1); transform: translateY(-2px); }
+  body.tm-body .btn-treasure:disabled { filter: grayscale(.3); opacity: .8; cursor: wait; }
+
+  body.tm-body .treasure-result-card {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin: 0 0 14px;
+    padding: 14px;
+    border-radius: 18px;
+    font-weight: 950;
+    animation: resultPop .22s ease both;
+  }
+
+  body.tm-body .treasure-result-card.success {
+    color: #08351f;
+    background: linear-gradient(135deg, rgba(184,255,208,.95), rgba(66,201,122,.72));
+    border: 1px solid rgba(15,119,66,.24);
+  }
+
+  body.tm-body .treasure-result-card.error {
+    color: #fff4dd;
+    background: linear-gradient(135deg, rgba(130,45,31,.98), rgba(222,82,54,.90));
+    border: 1px solid rgba(255,226,180,.24);
+  }
+
+  body.tm-body .treasure-result-card .result-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(255,255,255,.35);
+    font-size: 1.35rem;
+  }
+
+  @keyframes resultPop { from { opacity:0; transform: translateY(8px) scale(.98); } to { opacity:1; transform:none; } }
+
+  body.tm-body .flag-submit-group.is-wrong .form-control {
+    animation: wrongShake .32s ease both;
+    border-color: #c44a32 !important;
+    box-shadow: 0 0 0 4px rgba(196,74,50,.14);
+  }
+
+  @keyframes wrongShake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-7px); }
+    50% { transform: translateX(7px); }
+    75% { transform: translateX(-4px); }
+  }
+
+  body.tm-body .gps-pin.is-solved-now .gps-pin-marker {
+    animation: solvedPulse 1.1s ease both;
+  }
+
+  @keyframes solvedPulse {
+    0% { box-shadow: 0 0 0 0 rgba(248,187,62,.55); }
+    60% { box-shadow: 0 0 0 28px rgba(248,187,62,0), 0 18px 34px rgba(0,0,0,.32); }
+    100% { box-shadow: inset 0 -8px 0 rgba(0,0,0,.12), 0 0 0 8px rgba(248,187,62,.22); }
+  }
+
+  @media (max-width: 960px) {
+    body.tm-body .clue-grid { grid-template-columns: 1fr; }
+    body.tm-body .gps-drag-chip { display: none; }
+  }
+
+  @media (max-width: 1060px) {
+    body.tm-body .gps-hero { grid-template-columns: 1fr; }
+    body.tm-body .gps-map-shell { grid-template-columns: 1fr; min-height: 0; }
+    body.tm-body .gps-sidebar { border-right: 0; border-bottom: 1px solid rgba(92,54,17,.20); }
+    body.tm-body .gps-category-list { max-height: 180px; }
+    body.tm-body .gps-map-stage { min-height: 620px; }
+  }
+
+  @media (max-width: 680px) {
+    body.tm-body .gps-treasure-page { width: min(100% - 18px, 1500px); padding-top: 14px; }
+    body.tm-body .gps-map-shell { border-radius: 24px; }
+    body.tm-body .gps-sidebar { padding: 14px; }
+    body.tm-body .gps-filter-grid { grid-template-columns: 1fr; }
+    body.tm-body .gps-stats { grid-template-columns: 1fr; }
+    body.tm-body .gps-map-stage { min-height: 600px; }
+    body.tm-body .gps-pin { width: 64px; }
+    body.tm-body .gps-pin-marker { width: 48px; height: 48px; }
+    body.tm-body .gps-popup { transform: translate(-50%, calc(-100% - 74px)); }
+    body.tm-body .gps-bottom-bar { align-items: flex-start; flex-direction: column; }
+  }
+
+
+  /* v14 polish: better clue modal + optional drag mode */
+  body.tm-body .gps-map-stage {
+    cursor: default;
+    touch-action: pan-y;
+  }
+  body.tm-body .gps-map-stage.drag-enabled {
+    cursor: grab;
+    touch-action: none;
+  }
+  body.tm-body .gps-map-stage.drag-enabled.is-dragging {
+    cursor: grabbing;
+  }
+  body.tm-body .gps-map-stage:not(.drag-enabled) .gps-map-canvas {
+    transition: transform .26s cubic-bezier(.2,.8,.2,1);
+  }
+  body.tm-body .gps-drag-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.42);
+    border: 1px solid rgba(92,54,17,.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  body.tm-body .gps-switch {
+    position: relative;
+    width: 58px;
+    height: 34px;
+    flex: 0 0 auto;
+    margin: 0;
+  }
+  body.tm-body .gps-switch input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  body.tm-body .gps-switch span {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    border-radius: 999px;
+    background: rgba(92,54,17,.25);
+    border: 1px solid rgba(92,54,17,.18);
+    transition: .22s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.16);
+  }
+  body.tm-body .gps-switch span::before {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 4px;
+    top: 3px;
+    border-radius: 999px;
+    background: #fff4c8;
+    box-shadow: 0 4px 12px rgba(0,0,0,.20);
+    transition: .22s ease;
+  }
+  body.tm-body .gps-switch input:checked + span {
+    background: linear-gradient(135deg, #1f7656, #35b77a);
+  }
+  body.tm-body .gps-switch input:checked + span::before {
+    transform: translateX(24px);
+  }
+  body.tm-body .gps-drag-toggle-copy b {
+    display: block;
+    color: #241103;
+    font-weight: 1000;
+    line-height: 1.15;
+  }
+  body.tm-body .gps-drag-toggle-copy small {
+    color: #6b421a;
+    font-weight: 900;
+  }
+  body.tm-body .gps-status[hidden] { display: none !important; }
+
+  body.tm-body .treasure-modal .modal-dialog.modal-xl {
+    width: min(1120px, calc(100vw - 34px));
+    max-width: min(1120px, calc(100vw - 34px));
+    margin: 18px auto;
+  }
+  body.tm-body .treasure-clue-modal {
+    border-radius: 30px !important;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(255,255,255,.52), transparent 19rem),
+      radial-gradient(circle at 100% 100%, rgba(248,187,62,.28), transparent 18rem),
+      linear-gradient(145deg, #fff4ca 0%, #efc46a 100%) !important;
+    border: 1px solid rgba(92,54,17,.20) !important;
+  }
+  body.tm-body .treasure-clue-modal .modal-header {
+    min-height: auto !important;
+    padding: 22px 26px !important;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255,255,255,.56), transparent 16rem),
+      linear-gradient(135deg, rgba(255,246,205,.98), rgba(248,187,62,.80)) !important;
+  }
+  body.tm-body .treasure-clue-modal .modal-title-wrap {
+    grid-template-columns: 66px minmax(0, 1fr) !important;
+    width: 100%;
+  }
+  body.tm-body .treasure-clue-modal .modal-icon {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 22px !important;
+    font-size: 1.85rem !important;
+  }
+  body.tm-body .treasure-clue-modal .modal-title {
+    margin: 0 !important;
+    font-size: clamp(2rem, 4vw, 3.2rem) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -.5px;
+  }
+  body.tm-body .treasure-clue-modal .modal-body {
+    padding: 20px 26px 26px !important;
+    max-height: min(72vh, 760px);
+    overflow: auto;
+  }
+  body.tm-body .clue-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px) !important;
+    gap: 20px !important;
+    align-items: start;
+  }
+  body.tm-body .clue-left-stack {
+    display: grid;
+    gap: 14px;
+  }
+  body.tm-body .clue-submit-card {
+    position: sticky;
+    top: 0;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255,255,255,.48), transparent 12rem),
+      linear-gradient(145deg, rgba(255,246,205,.90), rgba(225,174,78,.68));
+    box-shadow: 0 16px 34px rgba(92,54,17,.12), inset 0 1px 0 rgba(255,255,255,.44) !important;
+  }
+  body.tm-body .clue-description {
+    min-height: 150px !important;
+    padding: 22px 24px !important;
+    background:
+      linear-gradient(rgba(255,255,255,.62), rgba(255,255,255,.44)),
+      repeating-linear-gradient(0deg, rgba(92,54,17,.04), rgba(92,54,17,.04) 1px, transparent 1px, transparent 32px) !important;
+    border: 1px dashed rgba(92,54,17,.24) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.42);
+  }
+  body.tm-body .clue-card {
+    background: rgba(255,255,255,.48) !important;
+  }
+  body.tm-body .claim-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  body.tm-body .claim-card-title span {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    color: #fff2bf;
+    background: linear-gradient(135deg, #3d210a, #75410f);
+  }
+  body.tm-body .flag-submit-group .form-control {
+    min-height: 58px;
+    border-radius: 18px !important;
+    background: rgba(255,255,255,.80) !important;
+    border: 1px solid rgba(92,54,17,.18) !important;
+  }
+  body.tm-body .btn-treasure {
+    min-height: 58px !important;
+    border-radius: 18px !important;
+    background: linear-gradient(135deg, #4b2508, #8a4b10) !important;
+  }
+  body.tm-body .treasure-result-card.success {
+    background: linear-gradient(135deg, rgba(189,255,211,.98), rgba(55,196,116,.82)) !important;
+  }
+  body.tm-body .treasure-result-card.error {
+    background: linear-gradient(135deg, rgba(117,31,25,.98), rgba(223,68,49,.92)) !important;
+  }
+  body.tm-body .treasure-clue-modal .modal-footer {
+    padding: 14px 26px !important;
+    background: rgba(255,246,205,.48) !important;
+    border-top: 1px dashed rgba(92,54,17,.18) !important;
+  }
+
+  @media (max-width: 920px) {
+    body.tm-body .clue-grid { grid-template-columns: 1fr !important; }
+    body.tm-body .clue-submit-card { position: static; }
+  }
+
+
+
+  /* v15: connection actions + cleaner clue tools */
+  body.tm-body .connection-card {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  body.tm-body .connection-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px 10px;
+  }
+  body.tm-body .connection-head h4 { margin: 0 !important; }
+  body.tm-body .connection-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  body.tm-body .connection-action {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 999px;
+    color: #241103 !important;
+    background: linear-gradient(135deg, #fff6cf, #ffc64d);
+    box-shadow: 0 10px 18px rgba(92,54,17,.12);
+    font-size: .86rem;
+    font-weight: 1000;
+    cursor: pointer;
+    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  }
+  body.tm-body .connection-action:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+    box-shadow: 0 14px 24px rgba(92,54,17,.18);
+  }
+  body.tm-body .connection-action.open {
+    color: #fff2bf !important;
+    background: linear-gradient(135deg, #2f1706, #75410f);
+  }
+  body.tm-body .connection-pre {
+    margin: 0 18px 18px !important;
+    padding: 16px 18px !important;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    color: #1d0e03 !important;
+    background: rgba(255,248,224,.88) !important;
+    border: 1px solid rgba(92,54,17,.13) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+    word-break: break-all;
+  }
+  body.tm-body .connection-pre.is-clickable {
+    cursor: pointer;
+  }
+  body.tm-body .connection-pre.is-clickable:hover {
+    background: rgba(255,255,255,.96) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 0 0 4px rgba(248,187,62,.20);
+  }
+  body.tm-body .clue-submit-card .claim-card-title h4 {
+    margin: 0 !important;
+  }
+
+</style>
+
+<section class="gps-treasure-page">
+  {% include "components/errors.html" %}
+
+  <div class="gps-hero">
+    <div>
+      <div class="gps-kicker">🧭 Pirate GPS Mode</div>
+      <h1 class="gps-title">Treasure Map</h1>
+    </div>
+    <div class="gps-live-card" aria-live="polite">
+      <b id="gps-live-total">0</b>
+      <span>island terdeteksi</span>
+    </div>
+  </div>
+
+  <div class="gps-map-shell">
+    <aside class="gps-sidebar" aria-label="Treasure map control panel">
+      <div class="gps-sidebar-head">
+        <div class="gps-compass-logo">🧭</div>
+        <div>
+          <h2>Navigator</h2>
+          <p>Search, filter, dan pilih route challenge.</p>
+        </div>
+      </div>
+
+      <div class="gps-search-wrap">
+        <span>⌕</span>
+        <input id="gps-search" class="gps-search" type="search" placeholder="Cari island, kategori, atau point..." autocomplete="off">
+      </div>
+
+      <div class="gps-filter-grid" role="toolbar" aria-label="Treasure map filters">
+        <button type="button" class="gps-filter-btn active" data-map-filter="all">🧭 Pick a route</button>
+        <button type="button" class="gps-filter-btn" data-map-filter="unsolved">✕ Unsolved island</button>
+        <button type="button" class="gps-filter-btn" data-map-filter="solved">🏆 Solved treasure</button>
+        <button type="button" class="gps-filter-btn" data-map-random="1">🎲 Random island</button>
+      </div>
+
+      <div class="gps-drag-toggle-row">
+        <label class="gps-switch" for="gps-drag-toggle" aria-label="Toggle drag map">
+          <input id="gps-drag-toggle" type="checkbox">
+          <span></span>
+        </label>
+        <div class="gps-drag-toggle-copy">
+          <b>Mode geser map</b>
+          <small id="gps-drag-toggle-caption">OFF - scroll halaman tetap normal.</small>
+        </div>
+      </div>
+
+      <div class="gps-stats">
+        <div class="gps-stat"><b id="gps-stat-total">0</b><small>Total</small></div>
+        <div class="gps-stat"><b id="gps-stat-solved">0</b><small>Solved</small></div>
+        <div class="gps-stat"><b id="gps-stat-left">0</b><small>Left</small></div>
+      </div>
+
+      <div class="gps-category-panel">
+        <h3>Routes</h3>
+        <div id="gps-category-list" class="gps-category-list"></div>
+      </div>
+
+      <div id="gps-status" class="gps-status" hidden></div>
+    </aside>
+
+    <div class="gps-map-stage" id="gps-map-stage">
+      <div class="gps-drag-chip" id="gps-drag-chip">🖱️ Drag map OFF · aktifkan dari Navigator</div>
+      <div class="gps-map-canvas" id="gps-map-canvas">
+        <svg class="gps-route-svg" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+          <path id="gps-route-path" d=""></path>
+        </svg>
+        <span class="gps-map-label label-1">🏝️ Web Coast</span>
+        <span class="gps-map-label label-2">⚓ Pwn Bay</span>
+        <span class="gps-map-label label-3">🔐 Crypto Reef</span>
+        <div id="gps-pins"></div>
+        <div id="gps-popup-root"></div>
+        <div id="gps-empty" class="gps-empty" hidden>
+          <h3>Belum ada island yang cocok.</h3>
+          <p>Ubah filter/search atau pastikan challenge sudah visible untuk user.</p>
+        </div>
+      </div>
+
+      <div class="gps-map-controls" aria-label="Map controls">
+        <button type="button" class="gps-map-control" data-map-zoom="in" title="Zoom in">+</button>
+        <button type="button" class="gps-map-control" data-map-zoom="out" title="Zoom out">−</button>
+        <button type="button" class="gps-map-control" data-map-home="1" title="Reset map">⌂</button>
+      </div>
+
+      <div class="gps-bottom-bar">
+        <div><b id="gps-route-title">All Routes</b><br><span id="gps-route-caption">Klik pin untuk membuka clue.</span></div>
+        <div><b id="gps-visible-count">0</b> <span>visible island</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade treasure-modal" id="challenge-window" tabindex="-1" role="dialog" aria-hidden="true"></div>
+</section>
+{% endblock %}
+
+{% block entrypoint %}
+  <script defer src="{{ url_for('views.themes', theme='core', path='js/pages/main.js') }}"></script>
+{% endblock %}
+
+{% block scripts %}
+<script id="harbas-google-map-treasure-v14-js">
+(function () {
+  'use strict';
+
+  var state = {
+    challenges: [], filter: 'all', query: '', category: 'all', selectedId: null,
+    zoom: 1, panX: 0, panY: 0, positions: {}, solvedPulseId: null, dragging: false, dragMoved: false, dragEnabled: false
+  };
+
+  var coords = [
+    [16, 24], [34, 35], [55, 22], [75, 34], [87, 54], [68, 70], [45, 63], [24, 74],
+    [13, 52], [42, 17], [62, 43], [81, 18], [92, 76], [57, 84], [31, 50], [18, 86],
+    [49, 32], [72, 56], [37, 80], [83, 88], [22, 38], [59, 61], [70, 27], [29, 19]
+  ];
+
+  function ready(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  function rootUrl(path) {
+    var prefix = (window.init && init.urlRoot) ? String(init.urlRoot) : '';
+    if (!path) return prefix || '/';
+    if (prefix.endsWith('/') && path.charAt(0) === '/') return prefix.slice(0, -1) + path;
+    if (!prefix.endsWith('/') && path.charAt(0) !== '/') return prefix + '/' + path;
+    return prefix + path;
+  }
+
+  function headers(json) {
+    var h = {};
+    if (window.init && init.csrfNonce) h['CSRF-Token'] = init.csrfNonce;
+    if (json) h['Content-Type'] = 'application/json';
+    return h;
+  }
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  function byId(id) { return document.getElementById(id); }
+
+  function canvasEl() { return byId('gps-map-canvas'); }
+  function stageEl() { return byId('gps-map-stage'); }
+
+
+  function extract(resp) {
+    if (!resp) return [];
+    if (Array.isArray(resp)) return resp;
+    if (Array.isArray(resp.data)) return resp.data;
+    if (resp.data && Array.isArray(resp.data.challenges)) return resp.data.challenges;
+    if (resp.data && Array.isArray(resp.data.results)) return resp.data.results;
+    return [];
+  }
+
+  function solved(c) {
+    return !!(c.solved_by_me || c.solved || c.account_solved || c.user_solved);
+  }
+
+  function icon(category) {
+    var c = String(category || '').toLowerCase();
+    if (c.indexOf('web') !== -1) return '🌐';
+    if (c.indexOf('pwn') !== -1 || c.indexOf('binary') !== -1) return '💣';
+    if (c.indexOf('crypto') !== -1) return '🔐';
+    if (c.indexOf('forensic') !== -1) return '🔎';
+    if (c.indexOf('reverse') !== -1 || c.indexOf('rev') !== -1) return '⚙️';
+    if (c.indexOf('misc') !== -1) return '🧩';
+    if (c.indexOf('osint') !== -1) return '🛰️';
+    if (c.indexOf('asraf') !== -1) return '⚓';
+    if (c.indexOf('ramdan') !== -1) return '🏴‍☠️';
+    return '🏝️';
+  }
+
+  function normalizeCategory(c) {
+    return String(c && c.category ? c.category : 'Uncharted Waters');
+  }
+
+  function getPosition(c, index) {
+    var key = String(c.id == null ? index : c.id);
+    if (state.positions[key]) return state.positions[key];
+    var base = coords[index % coords.length];
+    var wave = Math.floor(index / coords.length);
+    var x = Math.max(8, Math.min(92, base[0] + ((wave * 7) % 16) - 8));
+    var y = Math.max(12, Math.min(88, base[1] + ((wave * 11) % 18) - 9));
+    state.positions[key] = { x: x, y: y };
+    return state.positions[key];
+  }
+
+  function categories() {
+    var map = {};
+    state.challenges.forEach(function (c) {
+      var cat = normalizeCategory(c);
+      if (!map[cat]) map[cat] = { name: cat, total: 0, solved: 0 };
+      map[cat].total += 1;
+      if (solved(c)) map[cat].solved += 1;
+    });
+    return Object.keys(map).sort(function (a, b) { return a.localeCompare(b); }).map(function (k) { return map[k]; });
+  }
+
+  function visibleChallenges() {
+    var q = state.query.trim().toLowerCase();
+    return state.challenges.filter(function (c) {
+      var isSolved = solved(c);
+      if (state.filter === 'solved' && !isSolved) return false;
+      if (state.filter === 'unsolved' && isSolved) return false;
+      if (state.category !== 'all' && normalizeCategory(c) !== state.category) return false;
+      if (q) {
+        var blob = [c.name, c.category, c.value, c.solves].join(' ').toLowerCase();
+        if (blob.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function setText(id, text) {
+    var el = byId(id);
+    if (el) el.textContent = text;
+  }
+
+  function setStatus(html) {
+    var el = byId('gps-status');
+    if (!el) return;
+    if (!html) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    el.innerHTML = html;
+  }
+
+  function renderStats(list) {
+    var total = state.challenges.length;
+    var done = state.challenges.filter(solved).length;
+    setText('gps-live-total', String(total));
+    setText('gps-stat-total', String(total));
+    setText('gps-stat-solved', String(done));
+    setText('gps-stat-left', String(Math.max(total - done, 0)));
+    setText('gps-visible-count', String(list.length));
+    var routeName = state.category === 'all' ? 'All Routes' : state.category;
+    setText('gps-route-title', routeName);
+    setText('gps-route-caption', list.length ? 'Klik pin untuk membuka clue.' : 'Tidak ada island pada route/filter ini.');
+  }
+
+  function renderCategories() {
+    var root = byId('gps-category-list');
+    if (!root) return;
+    var items = categories();
+    var html = '<button type="button" class="gps-route-btn ' + (state.category === 'all' ? 'active' : '') + '" data-category="all"><span class="gps-route-icon">🗺️</span><span class="gps-route-info"><b>All Routes</b><small>' + state.challenges.length + ' island total</small></span></button>';
+    items.forEach(function (item) {
+      html += '<button type="button" class="gps-route-btn ' + (state.category === item.name ? 'active' : '') + '" data-category="' + esc(item.name) + '"><span class="gps-route-icon">' + icon(item.name) + '</span><span class="gps-route-info"><b>' + esc(item.name) + '</b><small>' + item.solved + '/' + item.total + ' solved</small></span></button>';
+    });
+    root.innerHTML = html;
+    root.querySelectorAll('[data-category]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.category = btn.getAttribute('data-category') || 'all';
+        state.selectedId = null;
+        render();
+      });
+    });
+  }
+
+  function renderRoutePath(list) {
+    var path = byId('gps-route-path');
+    if (!path) return;
+    if (!list.length) { path.setAttribute('d', ''); return; }
+    var points = list.slice(0, 24).map(function (c, idx) {
+      var p = getPosition(c, state.challenges.indexOf(c));
+      return { x: p.x * 10, y: p.y * 7 };
+    });
+    if (!points.length) { path.setAttribute('d', ''); return; }
+    var d = 'M ' + points[0].x + ' ' + points[0].y;
+    for (var i = 1; i < points.length; i++) {
+      var prev = points[i - 1], cur = points[i];
+      var midX = (prev.x + cur.x) / 2;
+      d += ' Q ' + midX + ' ' + prev.y + ' ' + cur.x + ' ' + cur.y;
+    }
+    path.setAttribute('d', d);
+  }
+
+  function renderPins(list) {
+    var root = byId('gps-pins');
+    var empty = byId('gps-empty');
+    if (!root) return;
+    root.innerHTML = list.map(function (c, order) {
+      var idx = state.challenges.indexOf(c);
+      var p = getPosition(c, idx);
+      var ok = solved(c);
+      var active = String(state.selectedId) === String(c.id);
+      return '<button type="button" class="gps-pin ' + (ok ? 'is-solved' : 'is-unsolved') + (active ? ' active' : '') + (String(state.solvedPulseId) === String(c.id) ? ' is-solved-now' : '') + '" data-challenge-id="' + esc(c.id) + '" style="--x:' + p.x + ';--y:' + p.y + '; animation-delay:' + Math.min(order * 0.035, 0.7) + 's">' +
+        '<span class="gps-pin-marker"><span>' + icon(c.category) + '</span></span>' +
+        '<span class="gps-pin-price">' + esc(c.value || 0) + ' pts</span>' +
+      '</button>';
+    }).join('');
+    if (empty) empty.hidden = !!list.length;
+    root.querySelectorAll('[data-challenge-id]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-challenge-id');
+        var challenge = state.challenges.find(function (c) { return String(c.id) === String(id); });
+        selectChallenge(challenge, false);
+      });
+    });
+  }
+
+  function selectChallenge(c, fly) {
+    if (!c) return;
+    state.selectedId = c.id;
+    if (fly) flyToChallenge(c);
+    renderPins(visibleChallenges());
+    renderPopup(c);
+  }
+
+  function renderPopup(c) {
+    var root = byId('gps-popup-root');
+    if (!root) return;
+    var p = getPosition(c, state.challenges.indexOf(c));
+    var ok = solved(c);
+    root.innerHTML = '<div class="gps-popup" style="--x:' + p.x + ';--y:' + p.y + '">' +
+      '<div class="gps-popup-top"><div class="gps-popup-icon">' + icon(c.category) + '</div><div><h3>' + esc(c.name || 'Unnamed Challenge') + '</h3><div class="gps-popup-meta"><span>' + esc(normalizeCategory(c)) + '</span><span>' + esc(c.value || 0) + ' pts</span><span>' + esc(c.solves || 0) + ' solves</span><span>' + (ok ? 'Solved' : 'Unsolved') + '</span></div></div></div>' +
+      '<div class="gps-popup-actions"><button type="button" data-popup-close="1">Close</button><button type="button" class="primary" data-popup-open="1">Open clue</button></div>' +
+    '</div>';
+    var close = root.querySelector('[data-popup-close]');
+    var open = root.querySelector('[data-popup-open]');
+    if (close) close.addEventListener('click', function () { state.selectedId = null; root.innerHTML = ''; renderPins(visibleChallenges()); });
+    if (open) open.addEventListener('click', function () { openChallenge(c.id); });
+  }
+
+  function render() {
+    var list = visibleChallenges();
+    renderStats(list);
+    renderCategories();
+    renderRoutePath(list);
+    renderPins(list);
+    if (state.selectedId) {
+      var selected = list.find(function (c) { return String(c.id) === String(state.selectedId); });
+      if (selected) renderPopup(selected); else { state.selectedId = null; var pr = byId('gps-popup-root'); if (pr) pr.innerHTML = ''; }
+    }
+    setStatus('');
+  }
+
+  function setFilter(filter) {
+    state.filter = filter || 'all';
+    document.querySelectorAll('[data-map-filter]').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-map-filter') === state.filter);
+    });
+    state.selectedId = null;
+    var pr = byId('gps-popup-root'); if (pr) pr.innerHTML = '';
+    render();
+  }
+
+  function randomIsland() {
+    var pool = visibleChallenges();
+    if (!pool.length) pool = state.challenges.slice();
+    var unsolved = pool.filter(function (c) { return !solved(c); });
+    if (unsolved.length) pool = unsolved;
+    if (!pool.length) return;
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    selectChallenge(pick, true);
+    var pin = document.querySelector('[data-challenge-id="' + String(pick.id).replace(/"/g, '\\"') + '"]');
+    if (pin) {
+      pin.classList.add('is-picked');
+      setTimeout(function () { pin.classList.remove('is-picked'); }, 900);
+    }
+  }
+
+
+  function clampPan() {
+    var stage = stageEl();
+    if (!stage) return;
+    var w = 1600 * state.zoom;
+    var h = 1000 * state.zoom;
+    var sw = stage.clientWidth;
+    var sh = stage.clientHeight;
+    var pad = 160;
+    var minX = Math.min(sw - w - pad, pad);
+    var maxX = pad;
+    var minY = Math.min(sh - h - pad, pad);
+    var maxY = pad;
+    state.panX = Math.max(minX, Math.min(maxX, state.panX));
+    state.panY = Math.max(minY, Math.min(maxY, state.panY));
+  }
+
+  function applyTransform() {
+    clampPan();
+    var canvas = canvasEl();
+    if (!canvas) return;
+    canvas.style.setProperty('--zoom', state.zoom.toFixed(2));
+    canvas.style.setProperty('--pan-x', Math.round(state.panX) + 'px');
+    canvas.style.setProperty('--pan-y', Math.round(state.panY) + 'px');
+  }
+
+  function resetMapView() {
+    var stage = stageEl();
+    if (!stage) return;
+    state.zoom = 1;
+    state.panX = Math.round((stage.clientWidth - 1600) / 2);
+    state.panY = Math.round((stage.clientHeight - 1000) / 2);
+    applyTransform();
+  }
+
+  function zoomAt(clientX, clientY, nextZoom) {
+    var stage = stageEl();
+    if (!stage) return;
+    var rect = stage.getBoundingClientRect();
+    var x = clientX - rect.left;
+    var y = clientY - rect.top;
+    var oldZoom = state.zoom;
+    nextZoom = Math.max(.55, Math.min(1.95, nextZoom));
+    var worldX = (x - state.panX) / oldZoom;
+    var worldY = (y - state.panY) / oldZoom;
+    state.zoom = nextZoom;
+    state.panX = x - worldX * state.zoom;
+    state.panY = y - worldY * state.zoom;
+    applyTransform();
+  }
+
+  function flyToChallenge(c) {
+    var stage = stageEl();
+    if (!stage || !c) return;
+    var p = getPosition(c, state.challenges.indexOf(c));
+    var x = (p.x / 100) * 1600;
+    var y = (p.y / 100) * 1000;
+    state.panX = (stage.clientWidth / 2) - (x * state.zoom);
+    state.panY = (stage.clientHeight / 2) - (y * state.zoom) + 88;
+    applyTransform();
+  }
+
+
+  function applyDragState() {
+    var stage = stageEl();
+    var toggle = byId('gps-drag-toggle');
+    var caption = byId('gps-drag-toggle-caption');
+    var chip = byId('gps-drag-chip');
+    if (toggle) toggle.checked = !!state.dragEnabled;
+    if (stage) stage.classList.toggle('drag-enabled', !!state.dragEnabled);
+    if (caption) caption.textContent = state.dragEnabled ? 'ON - drag dan scroll akan menggerakkan map.' : 'OFF - scroll halaman tetap normal.';
+    if (chip) chip.textContent = state.dragEnabled ? '🖱️ Drag map ON · scroll untuk zoom' : '🖱️ Drag map OFF · aktifkan dari Navigator';
+  }
+
+  function initMapDrag() {
+    var stage = stageEl();
+    if (!stage) return;
+    resetMapView();
+    applyDragState();
+    window.addEventListener('resize', function () { applyTransform(); });
+    stage.addEventListener('wheel', function (e) {
+      if (!state.dragEnabled) return;
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? -0.10 : 0.10;
+      zoomAt(e.clientX, e.clientY, state.zoom + delta);
+    }, { passive: false });
+
+    var startX = 0, startY = 0, baseX = 0, baseY = 0;
+    stage.addEventListener('pointerdown', function (e) {
+      if (!state.dragEnabled) return;
+      if (e.target.closest('button, a, input, textarea, select, .gps-popup, .modal')) return;
+      state.dragging = true;
+      state.dragMoved = false;
+      startX = e.clientX; startY = e.clientY;
+      baseX = state.panX; baseY = state.panY;
+      stage.classList.add('is-dragging');
+      try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!state.dragging) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      if (Math.abs(dx) + Math.abs(dy) > 4) state.dragMoved = true;
+      state.panX = baseX + dx;
+      state.panY = baseY + dy;
+      applyTransform();
+    });
+    function endDrag(e) {
+      if (!state.dragging) return;
+      state.dragging = false;
+      stage.classList.remove('is-dragging');
+      try { stage.releasePointerCapture(e.pointerId); } catch (_) {}
+    }
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+    stage.addEventListener('pointerleave', endDrag);
+  }
+
+  function showToast(kind, title, message) {
+    document.querySelectorAll('.treasure-toast').forEach(function (el) { el.remove(); });
+    var toast = document.createElement('div');
+    toast.className = 'treasure-toast ' + (kind === 'bad' ? 'bad' : 'good');
+    toast.innerHTML = '<b>' + esc(title) + '</b><span>' + esc(message || '') + '</span>';
+    document.body.appendChild(toast);
+    setTimeout(function () { toast.style.opacity = '0'; toast.style.transform = 'translateY(14px) scale(.96)'; }, 3300);
+    setTimeout(function () { toast.remove(); }, 3900);
+  }
+
+  function launchConfetti() {
+    var emojis = ['🏆','💰','⭐','🪙','🏴‍☠️','✨','🗺️','⚓'];
+    for (var i = 0; i < 36; i++) {
+      var p = document.createElement('span');
+      p.className = 'treasure-confetti';
+      p.textContent = emojis[i % emojis.length];
+      p.style.setProperty('--cx', (50 + (Math.random() * 16 - 8)) + 'vw');
+      p.style.setProperty('--cy', (44 + (Math.random() * 12 - 6)) + 'vh');
+      p.style.setProperty('--dx', (Math.random() * 520 - 260) + 'px');
+      p.style.setProperty('--dy', (Math.random() * -360 - 80) + 'px');
+      p.style.animationDelay = (Math.random() * .24) + 's';
+      document.body.appendChild(p);
+      setTimeout((function (node) { return function () { node.remove(); }; })(p), 1600);
+    }
+  }
+
+  function refreshChallengesSilent() {
+    return fetch(rootUrl('/api/v1/challenges'), { credentials: 'same-origin', headers: headers(false), cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (resp) { var next = extract(resp); if (next.length) { state.challenges = next; state.positions = {}; render(); } });
+  }
+
+  function initControls() {
+    document.querySelectorAll('[data-map-filter]').forEach(function (btn) {
+      btn.addEventListener('click', function () { setFilter(btn.getAttribute('data-map-filter')); });
+    });
+    var random = document.querySelector('[data-map-random]');
+    if (random) random.addEventListener('click', randomIsland);
+    var search = byId('gps-search');
+    if (search) search.addEventListener('input', function () { state.query = search.value || ''; state.selectedId = null; render(); });
+    var dragToggle = byId('gps-drag-toggle');
+    if (dragToggle) dragToggle.addEventListener('change', function () {
+      state.dragEnabled = !!dragToggle.checked;
+      state.dragging = false;
+      var stage = stageEl(); if (stage) stage.classList.remove('is-dragging');
+      applyDragState();
+    });
+    document.querySelectorAll('[data-map-zoom]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var stage = stageEl();
+        var rect = stage ? stage.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+        var dir = btn.getAttribute('data-map-zoom');
+        zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, state.zoom + (dir === 'in' ? 0.14 : -0.14));
+      });
+    });
+    var home = document.querySelector('[data-map-home]');
+    if (home) home.addEventListener('click', function () {
+      state.selectedId = null; state.category = 'all'; state.filter = 'all'; state.query = '';
+      resetMapView();
+      var search = byId('gps-search'); if (search) search.value = '';
+      document.querySelectorAll('[data-map-filter]').forEach(function (btn) { btn.classList.toggle('active', btn.getAttribute('data-map-filter') === 'all'); });
+      var pr = byId('gps-popup-root'); if (pr) pr.innerHTML = '';
+      render();
+    });
+  }
+
+  function showModal(modal) {
+    if (window.jQuery && jQuery.fn && jQuery.fn.modal) return jQuery(modal).modal('show');
+    modal.style.display = 'block'; modal.classList.add('show'); document.body.classList.add('modal-open');
+  }
+
+  function hideModal(modal) {
+    if (window.jQuery && jQuery.fn && jQuery.fn.modal) return jQuery(modal).modal('hide');
+    modal.style.display = 'none'; modal.classList.remove('show'); document.body.classList.remove('modal-open');
+  }
+
+  function normalizeFile(file) {
+    if (typeof file === 'string') return file;
+    if (file && file.location) return file.location;
+    if (file && file.url) return file.url;
+    if (file && file.href) return file.href;
+    return '';
+  }
+
+  function normalizeTag(tag) {
+    if (typeof tag === 'string') return tag;
+    if (tag && tag.value) return tag.value;
+    if (tag && tag.name) return tag.name;
+    return '';
+  }
+
+  function connectionUrl(value) {
+    var text = String(value || '').trim();
+    var match = text.match(/https?:\/\/[^\s<>'"]+/i);
+    return match ? match[0] : '';
+  }
+
+  function copyToClipboard(text) {
+    text = String(text || '');
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        ok ? resolve() : reject(new Error('Copy failed'));
+      } catch (e) { reject(e); }
+    });
+  }
+
+  function bindConnectionActions(modal) {
+    modal.querySelectorAll('[data-copy-connection]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var text = btn.getAttribute('data-copy-connection') || '';
+        copyToClipboard(text).then(function () {
+          btn.textContent = '✅ Copied';
+          showToast('good', 'Connection copied', 'Target connection berhasil disalin.');
+          setTimeout(function () { btn.textContent = '📋 Copy'; }, 1300);
+        }).catch(function () {
+          showToast('bad', 'Copy gagal', 'Browser tidak mengizinkan clipboard.');
+        });
+      });
+    });
+    modal.querySelectorAll('[data-open-connection]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var url = el.getAttribute('data-open-connection') || '';
+        if (url) window.open(url, '_blank', 'noopener');
+      });
+    });
+  }
+
+  function openChallenge(id) {
+    var modal = byId('challenge-window');
+    if (!modal) return;
+    modal.innerHTML = '<div class="modal-dialog modal-lg" role="document"><div class="modal-content treasure-clue-modal"><div class="modal-body text-center p-5"><i class="fas fa-circle-notch fa-spin fa-2x fa-fw spinner"></i><p class="mt-3"><b>Membuka clue...</b></p></div></div></div>';
+    showModal(modal);
+
+    fetch(rootUrl('/api/v1/challenges/' + encodeURIComponent(id)), { credentials: 'same-origin', headers: headers(false), cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (resp) { if (!resp || resp.success === false) throw new Error((resp && resp.message) || 'Cannot load challenge'); renderChallengeModal(modal, resp.data || {}, id); })
+      .catch(function (err) {
+        modal.innerHTML = '<div class="modal-dialog modal-lg" role="document"><div class="modal-content treasure-clue-modal"><div class="modal-header"><h5 class="modal-title">Treasure clue failed</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button></div><div class="modal-body"><p>Challenge gagal dibuka.</p><code>' + esc(err.message) + '</code></div></div></div>';
+        modal.querySelectorAll('[data-dismiss="modal"], .close').forEach(function (btn) { btn.addEventListener('click', function () { hideModal(modal); }); });
+      });
+  }
+
+  function renderChallengeModal(modal, c, id) {
+    var stateChallenge = state.challenges.find(function (x) { return String(x.id) === String(id); }) || c;
+    var isSolved = solved(stateChallenge) || solved(c);
+    var files = '';
+    if (Array.isArray(c.files) && c.files.length) {
+      files = '<div class="clue-card"><h4>📜 Treasure scrolls</h4><div class="file-list">' + c.files.map(function (f) {
+        var href = normalizeFile(f);
+        return href ? '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(rootUrl(href)) + '">Download file</a>' : '';
+      }).join('') + '</div></div>';
+    }
+
+    var tags = '';
+    if (Array.isArray(c.tags) && c.tags.length) {
+      tags = '<div class="tag-list">' + c.tags.map(function (t) { t = normalizeTag(t); return t ? '<span class="badge">' + esc(t) + '</span>' : ''; }).join('') + '</div>';
+    }
+    var connText = String(c.connection_info || '').trim();
+    var connUrl = connectionUrl(connText);
+    var connection = connText ? '<div class="clue-card connection-card"><div class="connection-head"><h4>⚓ Connection</h4><div class="connection-actions"><button type="button" class="connection-action" data-copy-connection="' + esc(connText) + '">📋 Copy</button>' + (connUrl ? '<button type="button" class="connection-action open" data-open-connection="' + esc(connUrl) + '">↗ Open</button>' : '') + '</div></div><pre class="connection-pre' + (connUrl ? ' is-clickable' : '') + '"' + (connUrl ? ' data-open-connection="' + esc(connUrl) + '" title="Klik untuk buka target di tab baru"' : '') + '>' + esc(connText) + '</pre></div>' : '';
+    var hintCount = Array.isArray(c.hints) ? c.hints.length : 0;
+    var hints = hintCount ? '<div class="clue-card"><h4>💡 Hints</h4><p>' + hintCount + ' hint tersedia di challenge ini.</p></div>' : '';
+    var description = c.description || '<p>No description.</p>';
+    var solvedBadge = isSolved ? '<span>🏆 Solved</span>' : '<span>✕ Unsolved</span>';
+
+    modal.innerHTML = '' +
+      '<div class="modal-dialog modal-xl" role="document"><div class="modal-content treasure-clue-modal">' +
+      '<div class="modal-header"><div class="modal-title-wrap"><div class="modal-icon">' + icon(c.category) + '</div><div><h5 class="modal-title">' + esc(c.name || 'Treasure Clue') + '</h5><div class="modal-meta"><span>' + esc(c.category || 'Uncharted') + '</span><span>' + esc(c.value || 0) + ' pts</span><span>' + esc(c.solves || 0) + ' solves</span>' + solvedBadge + '</div></div></div><button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button></div>' +
+      '<div class="modal-body"><div class="clue-grid"><div class="clue-left-stack"><div class="clue-description">' + description + '</div>' + tags + connection + files + hints + '</div>' +
+      '<aside class="clue-submit-card"><div class="claim-card-title"><span>🚩</span><h4>Claim Treasure</h4></div><div id="treasure-submit-result">' + (isSolved ? '<div class="treasure-result-card success"><span class="result-icon">🏆</span><div><b>Treasure already claimed.</b><br><span>Challenge ini sudah solved.</span></div></div>' : '') + '</div><label class="flag-label" for="treasure-flag-input">Submit flag</label><div class="input-group flag-submit-group"><input id="treasure-flag-input" class="form-control" autocomplete="off" placeholder="Masukkan flag di sini"><button type="button" id="treasure-submit-btn" class="btn btn-treasure">Claim Treasure</button></div></aside></div></div>' +
+      '<div class="modal-footer"><button type="button" class="btn btn-ghost" data-dismiss="modal">Close Map</button></div></div></div>';
+
+    modal.querySelectorAll('[data-dismiss="modal"], .close').forEach(function (btn) { btn.addEventListener('click', function () { hideModal(modal); }); });
+    bindConnectionActions(modal);
+    var submit = modal.querySelector('#treasure-submit-btn');
+    var input = modal.querySelector('#treasure-flag-input');
+    var result = modal.querySelector('#treasure-submit-result');
+    if (submit) submit.addEventListener('click', function () { submitFlag(id, input.value, result, submit); });
+    if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submitFlag(id, input.value, result, submit); });
+    setTimeout(function () { if (input && !isSolved) input.focus(); }, 250);
+  }
+
+  function submitFlag(id, value, result, submit) {
+    value = String(value || '').trim();
+    var group = document.querySelector('.flag-submit-group');
+    if (!value) {
+      result.innerHTML = '<div class="treasure-result-card error"><span class="result-icon">⚠️</span><div><b>Flag masih kosong.</b><br><span>Masukkan flag dulu sebelum klaim treasure.</span></div></div>';
+      if (group) { group.classList.remove('is-wrong'); void group.offsetWidth; group.classList.add('is-wrong'); }
+      showToast('bad', 'Flag kosong', 'Isi flag terlebih dahulu.');
+      return;
+    }
+    if (group) group.classList.remove('is-wrong');
+    submit.disabled = true; submit.textContent = 'Checking treasure...';
+    fetch(rootUrl('/api/v1/challenges/attempt'), {
+      method: 'POST', credentials: 'same-origin', headers: headers(true),
+      body: JSON.stringify({ challenge_id: Number(id), submission: value })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (resp) {
+        var data = resp.data || {};
+        var status = String(data.status || resp.status || '').toLowerCase();
+        var message = data.message || resp.message || 'Submission processed.';
+        var good = status === 'correct' || status === 'success' || status === 'already_solved';
+        if (good) {
+          result.innerHTML = '<div class="treasure-result-card success"><span class="result-icon">🏆</span><div><b>Flag benar! Treasure berhasil diklaim.</b><br><span>' + esc(message) + '</span></div></div>';
+          state.challenges.forEach(function (c) { if (String(c.id) === String(id)) { c.solved_by_me = true; c.solved = true; } });
+          state.solvedPulseId = id;
+          render();
+          var solvedChallenge = state.challenges.find(function (c) { return String(c.id) === String(id); });
+          if (solvedChallenge) flyToChallenge(solvedChallenge);
+          showToast('good', 'Flag benar!', message || 'Treasure berhasil diklaim.');
+          launchConfetti();
+          setTimeout(function () { state.solvedPulseId = null; renderPins(visibleChallenges()); }, 1400);
+          refreshChallengesSilent().catch(function () {});
+        } else {
+          result.innerHTML = '<div class="treasure-result-card error"><span class="result-icon">✕</span><div><b>Flag salah! Treasure belum terbuka.</b><br><span>' + esc(message || 'Flag salah, coba lagi.') + '</span></div></div>';
+          if (group) { group.classList.remove('is-wrong'); void group.offsetWidth; group.classList.add('is-wrong'); }
+          showToast('bad', 'Flag salah', message || 'Cek clue lagi dan coba submit ulang.');
+        }
+      })
+      .catch(function () {
+        result.innerHTML = '<div class="treasure-result-card error"><span class="result-icon">⚠️</span><div><b>Submit gagal.</b><br><span>Coba lagi atau cek koneksi server.</span></div></div>';
+        showToast('bad', 'Submit gagal', 'Coba lagi atau cek koneksi server.');
+      })
+      .finally(function () { submit.disabled = false; submit.textContent = 'Claim Treasure'; });
+  }
+
+  function loadChallenges() {
+    setStatus('');
+    fetch(rootUrl('/api/v1/challenges'), { credentials: 'same-origin', headers: headers(false), cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (resp) {
+        if (resp && resp.success === false) throw new Error(resp.message || 'API failed');
+        state.challenges = extract(resp);
+        state.positions = {};
+        render();
+      })
+      .catch(function (err) {
+        setStatus('<b>Treasure Map gagal load.</b> API tidak terbaca.');
+        var empty = byId('gps-empty');
+        if (empty) {
+          empty.hidden = false;
+          empty.innerHTML = '<h3>Challenge belum bisa ditampilkan.</h3><p>Detail: <code>' + esc(err.message) + '</code></p><p>Buka <code>/api/v1/challenges</code> saat login. Kalau kosong, challenge belum visible untuk user.</p>';
+        }
+      });
+  }
+
+  ready(function () {
+    initControls();
+    initMapDrag();
+    loadChallenges();
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-shell auth-shell-v16 login-page-v16">
+  <div class="auth-card auth-card-v16">
+    <div class="auth-grid-v16">
+      <aside class="auth-art-v16">
+        <div class="auth-coin-v16">☠️</div>
+        <h2>Board The Ship</h2>
+        <p>Masuk sebagai kapten, buka Treasure Map, dan lanjutkan perburuan flag.</p>
+        <div class="auth-mini-map-v16" aria-hidden="true">
+          <span class="isle a">🏝️</span>
+          <span class="isle b">⚓</span>
+          <span class="isle c">💎</span>
+          <span class="route"></span>
+        </div>
+      </aside>
+
+      <div class="auth-form-v16">
+        <div class="tm-eyebrow">🔐 Login Deck</div>
+        <h1>Login</h1>
+        <p>Masukkan nama kapten dan passphrase untuk masuk ke Treasure Map.</p>
+        {% include "components/errors.html" %}
+        {% with form = Forms.auth.LoginForm() %}
+        <form method="post" accept-charset="utf-8" autocomplete="off" class="tm-form-v16">
+          <label class="tm-field-v16">
+            <span>User Name or Email</span>
+            <div class="tm-input-icon-v16">
+              <b>@</b>
+              {{ form.name(class="form-control", value=name, placeholder="Captain name or email") }}
+            </div>
+          </label>
+
+          <label class="tm-field-v16">
+            <span>Password <a href="{{ url_for('auth.reset_password') }}">Forgot passphrase?</a></span>
+            <div class="tm-input-icon-v16">
+              <b>#</b>
+              {{ form.password(class="form-control", value=password, placeholder="Secret passphrase") }}
+            </div>
+          </label>
+
+          {{ form.submit(class="btn btn-treasure btn-lg btn-block auth-submit-v16", value="Enter The Map") }}
+          {{ form.nonce() }}
+        </form>
+        {% endwith %}
+
+        {% if registration_visible() %}
+          <div class="auth-divider auth-divider-v16"><span>Belum punya akun kapten?</span></div>
+          <a href="{{ url_for('auth.register') }}" class="btn btn-register btn-lg btn-block auth-register-v16">📝 Register / Join The Crew</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

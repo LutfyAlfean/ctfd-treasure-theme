@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="tm-hero settings-hero-v17">
+  <div class="tm-eyebrow">⚙️ Captain Settings</div>
+  <h1 class="tm-title">Settings</h1>
+  <p class="tm-subtitle">Kelola identitas kapten, password, profil publik, dan token akses.</p>
+</section>
+
+<section class="settings-shell-v17">
+  {% include "components/errors.html" %}
+
+  <div class="settings-card-v17">
+    <aside class="settings-side-v17">
+      <div class="settings-compass-v17">🧭</div>
+      <h2>Captain Control</h2>
+      <p>Update data akun dengan rapi. Perubahan akan langsung tersimpan setelah menekan tombol Save.</p>
+      <div class="settings-side-list-v17">
+        <a href="#profile-settings-v17">☠️ Profile</a>
+        <a href="#security-settings-v17">🔐 Security</a>
+        <a href="#public-settings-v17">🌍 Public Info</a>
+        <a href="#token-settings-v17">🪙 Tokens</a>
+      </div>
+    </aside>
+
+    <div class="settings-main-v17">
+      {% with form = Forms.self.SettingsForm(country = country) %}
+      {% from "core/macros/forms.html" import render_extra_fields %}
+      <form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form" class="settings-form-v17">
+        <div id="profile-settings-v17" class="settings-section-v17">
+          <div class="settings-section-head-v17">
+            <span>☠️</span>
+            <div><h3>Profile Identity</h3><p>Nama dan email akun kapten.</p></div>
+          </div>
+          <div class="settings-grid-v17">
+            <label class="settings-field-v17">
+              <span>{{ form.name.label }}</span>
+              {{ form.name(class="form-control", value=name) }}
+            </label>
+            <label class="settings-field-v17">
+              <span>{{ form.email.label }}</span>
+              {{ form.email(class="form-control", value=email) }}
+            </label>
+          </div>
+        </div>
+
+        <div id="security-settings-v17" class="settings-section-v17">
+          <div class="settings-section-head-v17">
+            <span>🔐</span>
+            <div><h3>Security Passphrase</h3><p>Isi current password untuk mengubah password baru.</p></div>
+          </div>
+          <div class="settings-grid-v17">
+            <label class="settings-field-v17">
+              <span>{{ form.confirm.label }}</span>
+              {{ form.confirm(class="form-control", placeholder="Current passphrase") }}
+            </label>
+            <label class="settings-field-v17">
+              <span>{{ form.password.label }}</span>
+              {{ form.password(class="form-control", placeholder="New passphrase") }}
+            </label>
+          </div>
+        </div>
+
+        <div id="public-settings-v17" class="settings-section-v17">
+          <div class="settings-section-head-v17">
+            <span>🌍</span>
+            <div><h3>Public Profile</h3><p>Informasi yang tampil di crew manifest dan profile publik.</p></div>
+          </div>
+          <div class="settings-grid-v17">
+            <label class="settings-field-v17">
+              <span>{{ form.affiliation.label }}</span>
+              {{ form.affiliation(class="form-control", value=affiliation or "", placeholder="School / team / organization") }}
+            </label>
+            <label class="settings-field-v17">
+              <span>{{ form.website.label }}</span>
+              {{ form.website(class="form-control", value=website or "", placeholder="https://example.com") }}
+            </label>
+          </div>
+          <div class="settings-extra-v17">
+            {{ render_extra_fields(form.extra) }}
+          </div>
+        </div>
+
+        <div id="results" class="form-group"></div>
+        <div class="settings-submit-row-v17">
+          {{ form.submit(class="btn btn-treasure btn-lg", value="Save Captain Profile") }}
+        </div>
+      </form>
+      {% endwith %}
+
+      <div id="token-settings-v17" class="settings-section-v17 settings-token-section-v17">
+        <div class="settings-section-head-v17">
+          <span>🪙</span>
+          <div><h3>Access Tokens</h3><p>Token API untuk integrasi otomatisasi dan tools eksternal.</p></div>
+        </div>
+        {% with form = Forms.self.TokensForm() %}
+        <form method="POST" id="user-token-form" class="settings-token-form-v17">
+          <label class="settings-field-v17">
+            <span>{{ form.expiration.label }}</span>
+            {{ form.expiration(class="form-control") }}
+          </label>
+          {{ form.submit(class="btn btn-ghost", value="Create Token") }}
+        </form>
+        {% endwith %}
+
+        {% if tokens %}
+          <div class="settings-token-table-v17">
+            <div class="token-row-v17 token-head-v17">
+              <b>Type</b><b>Created</b><b>Expiration</b><b>Delete</b>
+            </div>
+            {% for token in tokens %}
+              <div class="token-row-v17">
+                <span>{{ token.type }}</span>
+                <span data-time="{{ token.created | isoformat }}"></span>
+                <span data-time="{{ token.expiration | isoformat }}"></span>
+                <button class="delete-token token-delete-v17" type="button" data-token-id="{{ token.id }}">✕</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}{% endblock %}
+
+{% block entrypoint %}
+  <script defer="defer" src="{{ url_for('views.themes', theme='core', path='js/pages/settings.js') }}"></script>
+{% endblock %}

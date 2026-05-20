@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-card text-center">
+    <div class="tm-eyebrow">📨 Confirm Your Crew</div>
+    <h1>Confirm</h1>
+    {% include "components/errors.html" %}
+    <p>Kami sudah mengirim email konfirmasi. Klik link di email tersebut untuk mengaktifkan akun.</p>
+    <p>Kalau email belum masuk, cek spam atau hubungi admin.</p>
+    {% with form = Forms.auth.ConfirmForm() %}
+    <form method="POST" action="{{ url_for('auth.confirm') }}">
+      {{ form.submit(class="btn btn-treasure btn-lg btn-block") }}
+      <a href="{{ url_for('views.settings') }}" class="btn btn-ghost btn-lg btn-block mt-3">Change Email Address</a>
+      {{ form.nonce() }}
+    </form>
+    {% endwith %}
+  </div>
+</section>
+{% endblock %}

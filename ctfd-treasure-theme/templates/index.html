@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="tm-hero">
+  <div class="tm-eyebrow">🏴‍☠️ Welcome to The Pirate Island Arena</div>
+  <h1 class="tm-title">CTF Harbas</h1>
+  <p class="tm-subtitle">Masuki peta bajak laut, pilih pulau challenge, pecahkan clue, submit flag, dan kumpulkan harta karun sebanyak mungkin.</p>
+</section>
+
+<section class="tm-section">
+  <div class="tm-panel home-card">
+    <div class="home-grid">
+      <div class="home-copy">
+        <h2>Treasure Hunt Cyber Arena</h2>
+        <p>Setiap challenge adalah pulau tersembunyi. Jelajahi Web Exploitation, PWN, Cryptography, Forensics, Reverse Engineering, dan Misc. Buka clue, temukan flag, lalu naikkan namamu di Captain's Ledger.</p>
+        <div class="home-actions">
+          <a class="btn btn-treasure" href="{{ url_for('challenges.listing') }}">🗺️ Open Treasure Map</a>
+          <a class="btn btn-ghost" href="{{ url_for('scoreboard.listing') }}">🏆 View Ledger</a>
+          {% if not authed() %}<a class="btn btn-ghost" href="{{ url_for('auth.login') }}">🔐 Board The Ship</a>{% endif %}
+        </div>
+      </div>
+      <div class="map-art" aria-hidden="true">
+        <div class="map-dashes"></div>
+        <div class="island one"></div>
+        <div class="island two"></div>
+        <div class="island three"></div>
+        <div class="ship">⛵</div>
+        <div class="x-mark">X</div>
+        <div class="compass">N</div>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card"><b>🌐 Web</b><span>Eksploitasi aplikasi web dan logic bug.</span></div>
+      <div class="feature-card"><b>💣 PWN</b><span>Binary exploitation dan memory bug.</span></div>
+      <div class="feature-card"><b>🔐 Crypto</b><span>Pecahkan cipher dan kelemahan enkripsi.</span></div>
+      <div class="feature-card"><b>🔎 Forensic</b><span>Analisis file, metadata, log, dan jejak digital.</span></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

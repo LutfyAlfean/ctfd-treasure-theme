@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="tm-hero">
+  <div class="tm-eyebrow">🏆 Captain's Ledger</div>
+  <h1 class="tm-title">Scoreboard</h1>
+  <p class="tm-subtitle">Daftar kapten dan crew yang berhasil mengumpulkan harta paling banyak.</p>
+</section>
+
+<section class="tm-section">
+  <div class="tm-panel board-card">
+    {% include "components/errors.html" %}
+    {% cache 60, CacheKeys.PUBLIC_SCOREBOARD_TABLE %}
+      {% if standings %}
+        <div id="scoreboard" class="table-responsive">
+          <table class="table treasure-table">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 110px;">Rank</th>
+                <th scope="col">Captain / Crew</th>
+                <th scope="col" style="width: 220px;">Treasure</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for standing in standings %}
+                <tr>
+                  <th scope="row">#{{ loop.index }}</th>
+                  <td><a href="{{ generate_account_url(standing.account_id) }}">{{ standing.name | truncate(50) }}</a></td>
+                  <td><span class="badge">{{ standing.score }} pts</span></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="map-empty"><h3>Belum ada skor.</h3><p>Saatnya mulai berburu harta pertama.</p></div>
+      {% endif %}
+    {% endcache %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="{{ url_for('views.themes', theme='core', path='js/echarts.bundle.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+  <script defer src="{{ url_for('views.themes', theme='core', path='js/pages/scoreboard.js') }}"></script>
+{% endblock %}

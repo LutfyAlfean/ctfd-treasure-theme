@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="tm-hero crew-hero-v17">
+  <div class="tm-eyebrow">👥 Crew Manifest</div>
+  <h1 class="tm-title">Crews</h1>
+  <p class="tm-subtitle">Cari kapten, lihat profil crew, dan pantau hunter yang ikut berburu harta karun.</p>
+</section>
+
+<section class="crew-manifest-v17">
+  <div class="crew-dashboard-v17">
+    {% include "components/errors.html" %}
+
+    <div class="crew-topbar-v17">
+      <div>
+        <span class="crew-kicker-v17">🏴‍☠️ Manifest Board</span>
+        <h2>Daftar Crew Arena</h2>
+      </div>
+      <div class="crew-total-v17">
+        <b>{{ users.total }}</b>
+        <span>Total Crews</span>
+      </div>
+    </div>
+
+    <form method="GET" class="crew-search-form-v17" id="crew-search-form-v17" action="{{ url_for('users.listing') }}" novalidate>
+      <div class="crew-select-wrap-v17">
+        <span class="crew-control-label-v18">Search by</span><label class="sr-only" for="field">Search by</label>
+        <select class="form-control custom-select" id="field" name="field" aria-label="Search field">
+          <option value="name" {% if field == 'name' or not field %}selected{% endif %}>Name</option>
+          <option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
+          <option value="website" {% if field == 'website' %}selected{% endif %}>Website</option>
+        </select>
+      </div>
+      <div class="crew-input-wrap-v17">
+        <span class="crew-control-label-v18">Captain / Crew</span><label class="sr-only" for="q">Captain or crew name</label>
+        <input class="form-control" id="q" name="q" type="text" value="{{ q or '' }}" placeholder="Search captain or crew name" aria-label="Search crews" autocomplete="off">
+      </div>
+      <button type="submit" class="btn btn-treasure crew-search-btn-v17">🔎 Search</button>
+      {% if q %}
+        <a class="btn btn-ghost crew-reset-btn-v17" href="{{ url_for('users.listing') }}">Reset</a>
+      {% endif %}
+    </form>
+
+    {% if q and field %}
+      <div class="crew-search-status-v17">
+        <span>🧭 Filter aktif</span>
+        <b>{{ field }}</b>
+        <em>{{ q }}</em>
+        <a href="{{ url_for('users.listing') }}">Clear</a>
+      </div>
+    {% endif %}
+
+    {% if users.items %}
+      <div class="crew-grid-v17">
+        {% for user in users.items %}
+          <article class="crew-card-v17">
+            <div class="crew-card-glow-v17"></div>
+            <div class="crew-head-v17">
+              <div class="crew-avatar-v17">🏴‍☠️</div>
+              <div class="crew-title-v17">
+                {% if scores_visible() %}
+                  <a href="{{ url_for('users.public', user_id=user.id) }}">{{ user.name | truncate(50) }}</a>
+                {% else %}
+                  <b>{{ user.name | truncate(50) }}</b>
+                {% endif %}
+                <small>Treasure Hunter</small>
+              </div>
+            </div>
+
+            <div class="crew-meta-v17">
+              <div class="crew-meta-item-v17">
+                <span>⚓</span>
+                <div>
+                  <small>Affiliation</small>
+                  <b>{% if user.affiliation %}{{ user.affiliation | truncate(70) }}{% else %}No affiliation{% endif %}</b>
+                </div>
+              </div>
+              <div class="crew-meta-item-v17">
+                <span>🌍</span>
+                <div>
+                  <small>Country</small>
+                  <b>{% if user.country %}{{ user.country }}{% else %}Unknown waters{% endif %}</b>
+                </div>
+              </div>
+              <div class="crew-meta-item-v17">
+                <span>🌐</span>
+                <div>
+                  <small>Website</small>
+                  <b>
+                    {% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}
+                      {{ user.website | truncate(42) }}
+                    {% else %}
+                      No website
+                    {% endif %}
+                  </b>
+                </div>
+              </div>
+            </div>
+
+            <div class="crew-actions-v17">
+              {% if scores_visible() %}
+                <a class="btn btn-treasure btn-sm" href="{{ url_for('users.public', user_id=user.id) }}">View Profile</a>
+              {% endif %}
+              {% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}
+                <a class="btn btn-ghost btn-sm" href="{{ user.website }}" target="_blank" rel="noopener">Open Website ↗</a>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="crew-empty-v17">
+        <h3>Belum ada crew ditemukan.</h3>
+        <p>Coba kata kunci lain atau tampilkan semua crew.</p>
+        <a class="btn btn-treasure" href="{{ url_for('users.listing') }}">Show All Crews</a>
+      </div>
+    {% endif %}
+
+    {% if users.pages > 1 %}
+      <div class="crew-pagination-v17">
+        {% if users.page != 1 %}<a class="btn btn-ghost" href="{{ prev_page }}">← Previous</a>{% endif %}
+        <span class="crew-page-pill-v17">Page {{ users.page }} / {{ users.pages }}</span>
+        {% if users.next_num %}<a class="btn btn-ghost" href="{{ next_page }}">Next →</a>{% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  function ready(fn){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn):fn();}
+  ready(function(){
+    var form=document.getElementById('crew-search-form-v17');
+    if(!form) return;
+    var q=form.querySelector('[name="q"]');
+    if(q){ q.removeAttribute('required'); }
+    form.addEventListener('submit',function(e){
+      var value=(q && q.value || '').trim();
+      if(!value){
+        e.preventDefault();
+        window.location.href=form.getAttribute('action') || '/users';
+      }
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="tm-hero notify-hero-v17">
+  <div class="tm-eyebrow">🔔 Signals From The Port</div>
+  <h1 class="tm-title">Notifications</h1>
+  <p class="tm-subtitle">Pengumuman, arahan, dan sinyal penting dari panitia akan muncul di papan ini.</p>
+</section>
+
+<section class="notify-shell-v17">
+  <div class="notify-header-card-v17">
+    <div class="notify-orb-v17">📡</div>
+    <div>
+      <h2>Port Signal Board</h2>
+    </div>
+  </div>
+
+  {% if not notifications %}
+    <div class="notify-empty-v17">
+      <div>🌙</div>
+      <h2>Belum ada sinyal baru.</h2>
+      <p>Jika ada pengumuman penting, pesan akan muncul di sini.</p>
+    </div>
+  {% endif %}
+
+  <div class="notify-list-v17">
+    {% for notification in notifications %}
+      <article class="notify-card-v17">
+        <div class="notify-icon-v17">📜</div>
+        <div class="notify-content-v17">
+          <div class="notify-card-head-v17">
+            <h2>{{ notification.title }}</h2>
+            <span data-time="{{ notification.date | isoformat }}"></span>
+          </div>
+          <div class="notify-body-v17">{{ notification.html }}</div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block entrypoint %}
+  <script defer src="{{ url_for('views.themes', theme='core', path='js/pages/notifications.js') }}"></script>
+{% endblock %}

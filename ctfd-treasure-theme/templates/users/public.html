@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="tm-hero public-profile-hero-v19">
+  <div class="tm-eyebrow">👤 Crew Profile</div>
+  <h1 class="tm-title">{{ user.name }}</h1>
+</section>
+
+<section class="public-profile-shell-v19">
+  {% include "components/errors.html" %}
+
+  <div class="public-profile-card-v19">
+    <div class="public-card-top-v19">
+      <div class="public-avatar-v19">🏴‍☠️</div>
+      <div class="public-id-v19">
+        <small>Crew Identity</small>
+        <h2>{{ user.name }}</h2>
+        <div class="public-tags-v19">
+          {% if user.team_id %}<a href="{{ url_for('teams.public', team_id=user.team_id) }}">⛵ {{ user.team.name }}</a>{% endif %}
+          {% if user.affiliation %}<span>🏴 {{ user.affiliation }}</span>{% endif %}
+          {% if user.country %}<span>🌍 {{ user.country }}</span>{% endif %}
+          {% for field in user.fields %}<span>{{ field.name }}: {{ field.value }}</span>{% endfor %}
+        </div>
+      </div>
+      <div class="public-actions-v19">
+        {% if user.website %}<a href="{{ user.website }}" target="_blank" rel="noopener" class="btn btn-ghost">🌐 Website</a>{% endif %}
+      </div>
+    </div>
+
+    <div class="public-stats-v19">
+      <div class="public-stat-v19"><strong>{% if account.place %}#{{ account.place }}{% else %}-{% endif %}</strong><span>Rank</span></div>
+      <div class="public-stat-v19"><strong>{{ account.score or 0 }}</strong><span>Points</span></div>
+      <div class="public-stat-v19"><strong>{{ user.solves | length }}</strong><span>Solves</span></div>
+      <div class="public-stat-v19"><strong>{{ user.awards | length }}</strong><span>Awards</span></div>
+    </div>
+  </div>
+
+  <div class="public-solves-card-v19">
+    <div class="public-solves-head-v19">
+      <h3>✅ Solves</h3>
+      <span>{{ user.solves | length }} treasure claimed</span>
+    </div>
+
+    {% if user.solves %}
+      <div class="public-solves-list-v19">
+        {% for solve in user.solves %}
+          <a class="public-solve-row-v19" href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+            <span class="public-solve-icon-v19">💎</span>
+            <span class="public-solve-title-v19">
+              <b>{{ solve.challenge.name }}</b>
+              <small>{{ solve.challenge.category }} · <time data-time="{{ solve.date | isoformat }}"></time></small>
+            </span>
+            <strong class="public-solve-points-v19">{{ solve.challenge.value }} pts</strong>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="public-empty-v19">
+        <h3>Belum ada solve publik.</h3>
+        <p>Crew ini belum mengklaim treasure yang terlihat publik.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
