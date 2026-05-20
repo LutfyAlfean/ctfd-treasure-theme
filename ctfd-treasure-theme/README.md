@@ -10,9 +10,9 @@ This theme turns the CTFd experience into an interactive pirate arena: challenge
 
 ## Compatibility
 
-- Target platform: CTFd 3.x
-- Recommended: CTFd 3.4.0 or newer
-- Theme version: v19
+- Target platform: CTFd 3.8.5
+- Compatibility status: Built and packaged for CTFd 3.8.5
+- Theme version: v1
 - Author: Amablex
 
 ## Features
