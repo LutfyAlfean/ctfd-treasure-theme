@@ -5,6 +5,9 @@ This theme turns the CTFd experience into an interactive pirate arena: challenge
 
 > Built for CTFd and inspired by the structure of community CTFd themes such as `ctfd-neon-theme`.
 
+<img width="1902" height="922" alt="image" src="https://github.com/user-attachments/assets/331308d9-d38d-4be8-9579-bbc4892bb525" />
+
+
 ## Compatibility
 
 - Target platform: CTFd 3.8.5
