@@ -30,6 +30,11 @@ This theme turns the CTFd experience into an interactive pirate arena: challenge
 - Custom profile dashboard
 - Custom settings page
 - Admin and Settings navigation visible only for admin accounts
+CTF status screen
+- CTF paused
+- CTF has not started yet
+- CTF has ended
+- General info/error notices
 - Footer: `Copyright © Amablex 2026`
 
 ## Folder Structure

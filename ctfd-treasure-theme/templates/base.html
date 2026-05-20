@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/core.min.css') }}">
     {% block stylesheets %}{% endblock %}
-    <style id="harbas-treasure-map-v19-inline">
+    <style id="ctfd-treasure-theme-v20-inline">
 :root {
   --tm-bg: #06161c;
   --tm-sea: #0a3139;
@@ -530,7 +530,7 @@ label { color: var(--tm-ink); font-weight: 1000; }
 }
 
 /* =========================
-   Harbas Treasure Map v11 precision overrides
+   ctfd-treasure-theme legacy precision overrides
    ========================= */
 html, body.tm-body { width: 100%; overflow-x: hidden !important; }
 body.tm-body { background-color: #06161c !important; }
@@ -920,10 +920,10 @@ body.tm-body .tm-footer { color: rgba(255,240,191,.82) !important; text-align: c
   body.tm-body .tm-nav-links a { width: 100% !important; justify-content: flex-start !important; }
 }
 
-    
+
 
 /* =========================
-   Harbas Treasure Map v15: crews + footer polish
+   ctfd-treasure-theme crews + footer polish
    ========================= */
 body.tm-body .tm-footer {
   padding: 24px 0 34px !important;
@@ -1173,7 +1173,7 @@ body.tm-body .crew-page-pill-v15 {
 
 
 /* =========================
-   Harbas Treasure Map v16 polish: crew, auth, notification, profile
+   ctfd-treasure-theme polish: crew, auth, notification, profile
    ========================= */
 body.tm-body.harbas-v16 .tm-footer p,
 body.tm-body .tm-footer p {
@@ -1801,7 +1801,7 @@ body.tm-body .empty-profile-v16 { text-align: center; padding: 32px 20px; }
 }
 
 /* =========================
-   Harbas Treasure Map v17 final polish
+   ctfd-treasure-theme profile/settings polish
    ========================= */
 body.tm-body .tm-main { overflow-x: hidden; }
 body.tm-body input, body.tm-body select, body.tm-body textarea, body.tm-body button { font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif !important; }
@@ -1988,7 +1988,7 @@ body.tm-body .auth-form-v16 .extra-fields-v16 .form-control { width:100% !import
 
 
 /* =========================
-   Harbas Treasure Map v18 precision patch
+   ctfd-treasure-theme precision patch
    ========================= */
 body.tm-body.harbas-v18 .tm-main {
   padding-top: 0;
@@ -2287,7 +2287,7 @@ body.tm-body.harbas-v18 .token-row-v17 {
 
 
 /* =========================
-   Harbas Treasure Map v19 profile polish
+   ctfd-treasure-theme v20 profile polish
    ========================= */
 body.tm-body.harbas-v19 .tm-main {
   overflow-x: hidden !important;
@@ -2611,6 +2611,224 @@ body.tm-body.harbas-v19 .solve-card-v17 time {
   }
 }
 
+
+/* =========================================================
+   ctfd-treasure-theme v21 status cards
+   - Pretty CTF pause/not-started/ended notices from CTFd infos/errors
+   - Replaces plain alert text with pirate-map cards
+   ========================================================= */
+body.tm-body .tm-alert-stack {
+  width: min(var(--tm-max), calc(100% - (var(--tm-pad) * 2)));
+  margin: 26px auto 28px;
+  display: grid;
+  gap: 16px;
+}
+body.tm-body .tm-status-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 22px;
+  color: #241103;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,.72), transparent 18rem),
+    linear-gradient(135deg, #fff1bc 0%, #e8ba62 100%);
+  border: 1px solid rgba(92,54,17,.20);
+  box-shadow: 0 22px 58px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.22);
+}
+body.tm-body .tm-status-card::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 22px;
+  border: 1px dashed rgba(92,54,17,.22);
+  pointer-events: none;
+}
+body.tm-body .tm-status-card::after {
+  content: "";
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  right: -46px;
+  bottom: -58px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,.32), rgba(255,198,77,.12) 58%, transparent 62%);
+  pointer-events: none;
+}
+body.tm-body .tm-status-icon {
+  position: relative;
+  z-index: 1;
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+  color: #fff2bf;
+  font-size: 1.85rem;
+  background: linear-gradient(135deg, #2f1706, #75410f);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.11), 0 14px 28px rgba(92,54,17,.24);
+}
+body.tm-body .tm-status-main {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+body.tm-body .tm-status-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: #4f2d0f;
+  background: rgba(255,255,255,.42);
+  border: 1px solid rgba(92,54,17,.12);
+  font-size: .78rem;
+  font-weight: 1000;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+body.tm-body .tm-status-title {
+  margin: 0;
+  color: #241103;
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  line-height: 1.05;
+  font-weight: 1000;
+  letter-spacing: .2px;
+}
+body.tm-body .tm-status-message {
+  margin: 10px 0 0;
+  color: #5e3712;
+  font-size: clamp(.98rem, 1.4vw, 1.08rem);
+  font-weight: 850;
+  line-height: 1.55;
+}
+body.tm-body .tm-status-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+body.tm-body .tm-status-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: #fff2bf !important;
+  background: linear-gradient(135deg, #2f1706, #75410f);
+  box-shadow: 0 12px 24px rgba(92,54,17,.18);
+  font-size: .9rem;
+  font-weight: 1000;
+  white-space: nowrap;
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+body.tm-body .tm-status-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 16px 28px rgba(92,54,17,.25);
+}
+body.tm-body .tm-status-btn.secondary {
+  color: #241103 !important;
+  background: linear-gradient(135deg, #fff6cf, #ffc64d);
+}
+body.tm-body .tm-status-error .tm-status-icon,
+body.tm-body .tm-status-prestart .tm-status-icon {
+  background: linear-gradient(135deg, #5d1e15, #c35236);
+}
+body.tm-body .tm-status-info .tm-status-icon,
+body.tm-body .tm-status-paused .tm-status-icon {
+  background: linear-gradient(135deg, #103b3c, #2e7655);
+}
+body.tm-body .tm-status-ended .tm-status-icon {
+  background: linear-gradient(135deg, #261227, #754c91);
+}
+body.tm-body .tm-status-prestart {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,.78), transparent 18rem),
+    linear-gradient(135deg, #fff4c7 0%, #f4c15d 100%);
+}
+body.tm-body .tm-status-paused {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,.72), transparent 18rem),
+    linear-gradient(135deg, #e7ffdc 0%, #ddb65f 100%);
+}
+body.tm-body .tm-status-ended {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,.72), transparent 18rem),
+    linear-gradient(135deg, #efe2ff 0%, #e5b76b 100%);
+}
+body.tm-body .tm-status-mini-map {
+  position: relative;
+  width: 126px;
+  height: 82px;
+  display: block;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 22% 70%, #2e7655 0 16px, transparent 17px),
+    radial-gradient(circle at 72% 30%, #2e7655 0 18px, transparent 19px),
+    linear-gradient(135deg, #0b3440, #0c5963);
+  border: 1px solid rgba(36,17,3,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 12px 26px rgba(0,0,0,.14);
+}
+body.tm-body .tm-status-mini-map::before {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: 44px;
+  width: 70px;
+  height: 22px;
+  border-top: 4px dashed rgba(255,229,150,.78);
+  border-radius: 50%;
+  transform: rotate(-15deg);
+}
+body.tm-body .tm-status-mini-map::after {
+  content: "X";
+  position: absolute;
+  right: 24px;
+  top: 17px;
+  color: #fff2bf;
+  font-size: 1.4rem;
+  font-weight: 1000;
+  text-shadow: 0 2px 0 #4a2608;
+}
+body.tm-body .alert {
+  border-radius: 22px !important;
+  border: 1px solid rgba(92,54,17,.18) !important;
+  color: #241103 !important;
+  background: linear-gradient(135deg, #fff4c7, #e8ba62) !important;
+  font-weight: 900 !important;
+  box-shadow: 0 14px 34px rgba(0,0,0,.18) !important;
+}
+body.tm-body .alert-danger {
+  background: linear-gradient(135deg, #fff0dc, #f0a27d) !important;
+}
+body.tm-body .alert-info,
+body.tm-body .alert-success {
+  background: linear-gradient(135deg, #efffda, #e8ba62) !important;
+}
+@media (max-width: 860px) {
+  body.tm-body .tm-status-card {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+  body.tm-body .tm-status-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  body.tm-body .tm-status-mini-map {
+    display: none;
+  }
+}
+
 </style>
     {{ Plugins.styles }}
     <script type="text/javascript">
@@ -2626,7 +2844,7 @@ body.tm-body.harbas-v19 .solve-card-v17 time {
     </script>
     {{ Configs.theme_header }}
   </head>
-  <body class="tm-body harbas-v18 harbas-v19">
+  <body class="tm-body ctfd-treasure-theme v20 harbas-v18 harbas-v19">
     <div class="tm-bg-grid" aria-hidden="true"></div>
     <div class="tm-bg-symbol tm-bg-symbol-1" aria-hidden="true">✦</div>
     <div class="tm-bg-symbol tm-bg-symbol-2" aria-hidden="true">☠️</div>

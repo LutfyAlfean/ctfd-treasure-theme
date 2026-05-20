@@ -1,0 +1,44 @@
+{% set tm_errors = errors if errors is defined and errors else [] %}
+{% set tm_infos = infos if infos is defined and infos else [] %}
+{% if tm_errors or tm_infos %}
+<section class="tm-alert-stack" aria-label="CTF status notices">
+  {% for error in tm_errors %}
+    {% set msg = error|string %}
+    {% set low = msg|lower %}
+    {% set is_prestart = ('not started' in low) or ('belum mulai' in low) or ('belum dimulai' in low) %}
+    {% set is_ended = ('has ended' in low) or ('ended' in low) or ('berakhir' in low) %}
+    <article class="tm-status-card tm-status-error{% if is_prestart %} tm-status-prestart{% endif %}{% if is_ended %} tm-status-ended{% endif %}">
+      <div class="tm-status-icon">{% if is_prestart %}⏳{% elif is_ended %}🏁{% else %}⚠️{% endif %}</div>
+      <div class="tm-status-main">
+        <div class="tm-status-kicker">{% if is_prestart %}Treasure Gate Locked{% elif is_ended %}Voyage Complete{% else %}Captain Warning{% endif %}</div>
+        <h2 class="tm-status-title">{% if is_prestart %}Arena Belum Dimulai{% elif is_ended %}Perburuan Telah Berakhir{% else %}Ada Peringatan Arena{% endif %}</h2>
+        <p class="tm-status-message">{{ error }}</p>
+      </div>
+      <div class="tm-status-actions">
+        <span class="tm-status-mini-map" aria-hidden="true"></span>
+        <a class="tm-status-btn secondary" href="{{ url_for('views.static_html', route='/') }}">🏴‍☠️ Port</a>
+        {% if authed() %}<a class="tm-status-btn" href="{{ url_for('views.notifications') }}">🔔 Signals</a>{% else %}<a class="tm-status-btn" href="{{ url_for('auth.login') }}">🔐 Login</a>{% endif %}
+      </div>
+    </article>
+  {% endfor %}
+  {% for info in tm_infos %}
+    {% set msg = info|string %}
+    {% set low = msg|lower %}
+    {% set is_paused = ('paused' in low) or ('pause' in low) or ('jeda' in low) or ('ditunda' in low) %}
+    {% set is_ended = ('has ended' in low) or ('ended' in low) or ('berakhir' in low) %}
+    <article class="tm-status-card tm-status-info{% if is_paused %} tm-status-paused{% endif %}{% if is_ended %} tm-status-ended{% endif %}">
+      <div class="tm-status-icon">{% if is_paused %}⏸️{% elif is_ended %}🏁{% else %}📜{% endif %}</div>
+      <div class="tm-status-main">
+        <div class="tm-status-kicker">{% if is_paused %}Treasure Hunt Paused{% elif is_ended %}Voyage Complete{% else %}Captain Notice{% endif %}</div>
+        <h2 class="tm-status-title">{% if is_paused %}Arena Sedang Dijeda{% elif is_ended %}Perburuan Telah Berakhir{% else %}Pengumuman Arena{% endif %}</h2>
+        <p class="tm-status-message">{{ info }}</p>
+      </div>
+      <div class="tm-status-actions">
+        <span class="tm-status-mini-map" aria-hidden="true"></span>
+        <a class="tm-status-btn secondary" href="{{ url_for('scoreboard.listing') }}">🏆 Ledger</a>
+        <a class="tm-status-btn" href="{{ url_for('views.notifications') }}">🔔 Signals</a>
+      </div>
+    </article>
+  {% endfor %}
+</section>
+{% endif %}
